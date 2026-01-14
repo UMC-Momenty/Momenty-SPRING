@@ -1,5 +1,6 @@
 package com.umc.momenty.domain.user.entity;
 
+import com.umc.momenty.domain.pet.entity.Pet;
 import com.umc.momenty.domain.user.enums.AuthProvider;
 import com.umc.momenty.domain.user.enums.Gender;
 import com.umc.momenty.global.entity.BaseEntity;
@@ -8,6 +9,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,7 +41,7 @@ public class User extends BaseEntity {
     private LocalDateTime questTime;
 
     @Column(name = "profile_url")
-    private String profile_url;
+    private String profileUrl;
 
     @Column(name = "auth_provider", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -49,4 +52,7 @@ public class User extends BaseEntity {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Pet> pets = new ArrayList<>();
 }
