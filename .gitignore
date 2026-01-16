@@ -41,6 +41,9 @@ out/
 *.yml
 *.properties
 
+### workflow.yml 제외 ###
+!workflow.yml
+
 ### Logs ###
 *.log
 logs/
