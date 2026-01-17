@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class User extends BaseEntity {
     private LocalDate birth;
 
     @Column(name = "quest_time")
-    private LocalDateTime questTime;
+    private LocalTime questTime;
 
     @Column(name = "profile_url")
     private String profileUrl;
@@ -55,4 +56,24 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Pet> pets = new ArrayList<>();
+
+    public void updateUsername(String username) {
+        this.username = username;
+    }
+
+    public void updateGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void updateBirth(LocalDate birth) {
+        this.birth = birth;
+    }
+
+    public void updateProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public void updateQuestTime(LocalTime questTime) {
+        this.questTime = questTime;
+    }
 }
