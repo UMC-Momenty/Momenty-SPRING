@@ -52,4 +52,32 @@ public class Pet extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "breed_id", nullable = false)
     private Breed breed;
+
+    public void updatePetName(String petName) {
+        this.petName = petName;
+    }
+
+    public void updateGender(PetGender gender) {
+        this.gender = gender;
+    }
+
+    public void updateBirth(LocalDate birth) {
+        this.birth = birth;
+    }
+
+    public void updateProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateSpecies(Species species) {
+        this.species = species;
+    }
+
+    public void updateBreed(Breed breed) {
+        this.breed = breed;
+    }
+
+    public void updateIntro(String intro) {
+        this.intro = intro;
+    }
 }

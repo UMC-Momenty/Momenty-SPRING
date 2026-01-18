@@ -15,6 +15,7 @@ import com.umc.momenty.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -35,5 +36,54 @@ public class PetCommandServiceImpl implements PetCommandService {
         Pet pet = PetConverter.toPet(petProfileDTO, user, breed);
 
         petRepository.save(pet);
+    }
+
+    public void updatePetProfile(Long userId, Long petId, PetReqDTO.PetUpdateDTO petUpdateDTO) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        Pet pet = petRepository.findById(petId)
+                        .orElseThrow(() -> new PetException(PetErrorCode.PET_NOT_FOUND));
+
+        if (!pet.getUser().getId().equals(user.getId())) {
+            throw new PetException(PetErrorCode.PET_ACCESS_DENIED);
+        }
+
+        Optional.ofNullable(petUpdateDTO.petName())
+                .filter(petName -> !petName.isBlank())
+                .ifPresent(pet::updatePetName);
+
+        Optional.ofNullable(petUpdateDTO.gender())
+                .ifPresent(pet::updateGender);
+
+        Optional.ofNullable(petUpdateDTO.birth())
+                .ifPresent(pet::updateBirth);
+
+        Optional.ofNullable(petUpdateDTO.species())
+                .ifPresent(pet::updateSpecies);
+
+        Optional.ofNullable(petUpdateDTO.breedId())
+                .ifPresent(breedId -> {
+                    Breed breed = breedRepository.findById(breedId)
+                            .orElseThrow(() -> new PetException(PetErrorCode.BREED_NOT_FOUND));
+
+                    if (!breed.getSpecies().equals(pet.getSpecies())) {
+                        throw new PetException(PetErrorCode.INVALID_BREED_SPECIES);
+                    }
+
+                    pet.updateBreed(breed);
+                });
+
+        Optional.ofNullable(petUpdateDTO.intro())
+                .ifPresent(intro -> {
+                    if (intro.isBlank()) pet.updateIntro(null);
+                    else pet.updateIntro(intro);
+                });
+
+        Optional.ofNullable(petUpdateDTO.profileImageUrl())
+                .ifPresent(profileImageUrl -> {
+                    if (profileImageUrl.isBlank()) pet.updateProfileImageUrl(null);
+                    else pet.updateProfileImageUrl(profileImageUrl);
+                });
     }
 }

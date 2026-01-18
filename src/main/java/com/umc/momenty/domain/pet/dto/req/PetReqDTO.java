@@ -33,4 +33,17 @@ public class PetReqDTO {
             @Size(max = 500, message = "소개글은 500자 이내여야 합니다.")
             String intro
     ){}
+
+    @Builder
+    public record PetUpdateDTO(
+            String profileImageUrl,
+            String petName,
+            PetGender gender,
+            LocalDate birth,
+            Species species,
+            Long breedId,
+
+            @Size(max = 500, message = "소개글은 500자 이내여야 합니다.")
+            String intro
+    ){}
 }
