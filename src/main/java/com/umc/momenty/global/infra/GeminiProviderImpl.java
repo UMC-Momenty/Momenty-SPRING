@@ -9,16 +9,19 @@ import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class GeminiProviderImpl implements GeminiProvider {
+
+	private final Client geminiClient;
 
 	@Value("${gemini.model}")
 	private String model;
 
 	@Override
 	public String generateTextContent(String systemMessage, String userMessage) {
-		Client client = new Client();
-
 		GenerateContentConfig config =
 			GenerateContentConfig.builder()
 				.systemInstruction(
@@ -26,12 +29,11 @@ public class GeminiProviderImpl implements GeminiProvider {
 				.build();
 
 		GenerateContentResponse response =
-			client.models.generateContent(
+			geminiClient.models.generateContent(
 				model,
 				userMessage,
 				config);
 
-		client.close();
 		return response.text();
 	}
 }
