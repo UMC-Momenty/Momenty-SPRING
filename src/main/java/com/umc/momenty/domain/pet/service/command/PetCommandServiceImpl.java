@@ -6,8 +6,8 @@ import com.umc.momenty.domain.pet.entity.Breed;
 import com.umc.momenty.domain.pet.entity.Pet;
 import com.umc.momenty.domain.pet.exception.PetException;
 import com.umc.momenty.domain.pet.exception.code.PetErrorCode;
-import com.umc.momenty.domain.pet.repository.BreedRepository;
 import com.umc.momenty.domain.pet.repository.PetRepository;
+import com.umc.momenty.domain.pet.validator.PetValidator;
 import com.umc.momenty.domain.user.entity.User;
 import com.umc.momenty.domain.user.exception.UserException;
 import com.umc.momenty.domain.user.exception.code.UserErrorCode;
@@ -24,14 +24,14 @@ public class PetCommandServiceImpl implements PetCommandService {
 
     private final UserRepository userRepository;
     private final PetRepository petRepository;
-    private final BreedRepository breedRepository;
+    private final PetValidator petValidator;
 
     public void createPetProfile(Long userId, PetReqDTO.PetProfileDTO petProfileDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
-        Breed breed = breedRepository.findById(petProfileDTO.breedId())
-                .orElseThrow(() -> new PetException(PetErrorCode.BREED_NOT_FOUND));
+        Breed breed = petValidator.validateBreed(petProfileDTO.breedId());
+        petValidator.validateBreedSpecies(breed, petProfileDTO.species());
 
         Pet pet = PetConverter.toPet(petProfileDTO, user, breed);
 
@@ -45,9 +45,7 @@ public class PetCommandServiceImpl implements PetCommandService {
         Pet pet = petRepository.findById(petId)
                         .orElseThrow(() -> new PetException(PetErrorCode.PET_NOT_FOUND));
 
-        if (!pet.getUser().getId().equals(user.getId())) {
-            throw new PetException(PetErrorCode.PET_ACCESS_DENIED);
-        }
+        petValidator.validatePetOwner(pet, user);
 
         Optional.ofNullable(petUpdateDTO.petName())
                 .filter(petName -> !petName.isBlank())
@@ -64,13 +62,8 @@ public class PetCommandServiceImpl implements PetCommandService {
 
         Optional.ofNullable(petUpdateDTO.breedId())
                 .ifPresent(breedId -> {
-                    Breed breed = breedRepository.findById(breedId)
-                            .orElseThrow(() -> new PetException(PetErrorCode.BREED_NOT_FOUND));
-
-                    if (!breed.getSpecies().equals(pet.getSpecies())) {
-                        throw new PetException(PetErrorCode.INVALID_BREED_SPECIES);
-                    }
-
+                    Breed breed = petValidator.validateBreed(breedId);
+                    petValidator.validateBreedSpecies(breed, pet.getSpecies());
                     pet.updateBreed(breed);
                 });
 
