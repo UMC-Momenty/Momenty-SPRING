@@ -14,6 +14,7 @@ public class UserReqDTO {
             Gender gender,
             LocalDate birth,
             String profileUrl,
-            LocalTime questTime
+            LocalTime questTime,
+            Boolean resetQuestTime
     ){}
 }

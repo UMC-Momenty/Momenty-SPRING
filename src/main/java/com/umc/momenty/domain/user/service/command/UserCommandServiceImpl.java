@@ -34,9 +34,16 @@ public class UserCommandServiceImpl implements UserCommandService {
                 .ifPresent(user::updateBirth);
 
         Optional.ofNullable(userReqDTO.profileUrl())
-                .filter(profileUrl -> !profileUrl.isBlank())
-                .ifPresent(user::updateProfileUrl);
+                .ifPresent(profileUrl -> {
+                    if(profileUrl.isBlank()) user.updateProfileUrl(null);
+                    else user.updateProfileUrl(profileUrl);
+                });
 
-        user.updateQuestTime(userReqDTO.questTime());
+        if (Boolean.TRUE.equals(userReqDTO.resetQuestTime())) {
+            user.updateQuestTime(null);
+        } else {
+            Optional.ofNullable(userReqDTO.questTime())
+                    .ifPresent(user::updateQuestTime);
+        }
     }
 }
