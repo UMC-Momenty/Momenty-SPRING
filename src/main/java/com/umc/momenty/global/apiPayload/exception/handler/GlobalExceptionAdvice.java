@@ -49,6 +49,13 @@ public class GlobalExceptionAdvice {
                         errors.put(error.getField(), error.getDefaultMessage())
                 );
 
+        // Object validation
+        ex.getBindingResult()
+                .getGlobalErrors()
+                .forEach(error ->
+                        errors.put(error.getObjectName(), error.getDefaultMessage())
+                );
+
         BaseErrorCode code = GeneralErrorCode.VALID_FAILED;
 
         return ResponseEntity
