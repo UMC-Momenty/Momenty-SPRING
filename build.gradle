@@ -40,6 +40,9 @@ dependencies {
 
 	// Gemini API
 	implementation 'com.google.genai:google-genai:1.0.0'
+  
+	// Validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 tasks.named('test') {

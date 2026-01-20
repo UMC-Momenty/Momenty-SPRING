@@ -1,5 +1,6 @@
 package com.umc.momenty.domain.user.entity;
 
+import com.umc.momenty.domain.pet.entity.Pet;
 import com.umc.momenty.domain.user.enums.AuthProvider;
 import com.umc.momenty.domain.user.enums.Gender;
 import com.umc.momenty.global.entity.BaseEntity;
@@ -8,6 +9,9 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,10 +39,10 @@ public class User extends BaseEntity {
     private LocalDate birth;
 
     @Column(name = "quest_time")
-    private LocalDateTime questTime;
+    private LocalTime questTime;
 
     @Column(name = "profile_url")
-    private String profile_url;
+    private String profileUrl;
 
     @Column(name = "auth_provider", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -49,4 +53,27 @@ public class User extends BaseEntity {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Pet> pets = new ArrayList<>();
+
+    public void updateUsername(String username) {
+        this.username = username;
+    }
+
+    public void updateGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void updateBirth(LocalDate birth) {
+        this.birth = birth;
+    }
+
+    public void updateProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public void updateQuestTime(LocalTime questTime) {
+        this.questTime = questTime;
+    }
 }
