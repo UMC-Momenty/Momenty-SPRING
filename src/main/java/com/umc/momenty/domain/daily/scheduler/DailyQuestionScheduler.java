@@ -9,6 +9,8 @@ import org.springframework.core.retry.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.umc.momenty.global.apiPayload.exception.GeneralException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +27,10 @@ public class DailyQuestionScheduler {
 
 		RetryPolicy retryPolicy = RetryPolicy.builder()
 			.maxRetries(3)
-			.includes(TransactionException.class).build();
+			.includes(TransactionException.class)
+			.includes(GeneralException.class)
+			.build();
+
 		RetryTemplate retryTemplate = new RetryTemplate(retryPolicy);
 		retryTemplate.setRetryListener(new TryCreatingDailyQuestionListener());
 
@@ -48,9 +53,9 @@ public class DailyQuestionScheduler {
 		}
 	}
 
-	private class TryCreatingDailyQuestion implements Retryable<String> {
+	private class TryCreatingDailyQuestion implements Retryable<Void> {
 		@Override
-		public String execute() {
+		public Void execute() {
 			return dailyQuestionTask.createDailyQuestion();
 		}
 	}

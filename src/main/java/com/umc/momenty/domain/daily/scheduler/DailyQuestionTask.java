@@ -3,7 +3,6 @@ package com.umc.momenty.domain.daily.scheduler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import com.umc.momenty.domain.daily.entity.DailyQuestion;
 import com.umc.momenty.domain.daily.repository.DailyQuestionRepository;
@@ -27,18 +26,15 @@ public class DailyQuestionTask {
 	private final DailyQuestionRepository dailyQuestionRepository;
 
 	@Transactional
-	public String createDailyQuestion() {
+	public Void createDailyQuestion() {
 		String question = geminiProvider.generateTextContent(systemMessage, userMessage);
-
-		if (!StringUtils.hasText(question)) {
-			throw new RuntimeException("Gemini returned empty string");
-		}
 
 		DailyQuestion dailyQuestion = DailyQuestion.builder()
 			.question(question)
 			.build();
 		dailyQuestionRepository.save(dailyQuestion);
+
 		log.info("Daily Questions Saved Successfully [Question : {}]", question);
-		return question;
+		return null;
 	}
 }
