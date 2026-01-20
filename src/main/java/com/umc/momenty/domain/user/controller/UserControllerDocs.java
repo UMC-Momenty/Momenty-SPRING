@@ -30,13 +30,18 @@ public interface UserControllerDocs {
             @Parameter(description = "수정할 사용자 ID")
             Long userId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "프로필 수정 내용 (null이면 알림 미설정)\n\n"
+                    description = "프로필 수정 내용 (PATCH 방식)\n\n"
+                            + "**요청 규칙:**\n"
+                            + "- 전달되지 않은 필드는 기존 값을 유지합니다.\n"
+                            + "- profileUrl이 빈 문자열(\"\")일 경우 null로 초기화됩니다.\n"
+                            + "- resetQuestTime : true 일 경우 questTime은 null로 초기화됩니다.\n\n"
                             + "**요청 예시:**\n"
-                            + "- username: \"example\"\n"
-                            + "- gender: \"FEMALE\"\n"
-                            + "- birth: \"2000-01-01\"\n"
-                            + "- profileUrl: \"https://...\""
-                            + "- questTime: \"13:40\"",
+                            + "- \"username\": \"example\",\n"
+                            + "- \"gender\": \"FEMALE\",\n"
+                            + "- \"birth\": \"2000-01-01\",\n"
+                            + "- \"profileUrl\": \"https://...\",\n"
+                            + "- \"questTime\": \"13:40\"\n"
+                            + "- \"resetQuestTime\": true\n",
                     required = true
             )
             UserReqDTO.UserProfileDTO userReqDTO

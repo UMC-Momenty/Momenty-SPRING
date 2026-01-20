@@ -6,6 +6,7 @@ import com.umc.momenty.domain.user.exception.code.UserSuccessCode;
 import com.umc.momenty.domain.user.service.command.UserCommandService;
 import com.umc.momenty.domain.user.service.query.UserQueryService;
 import com.umc.momenty.global.apiPayload.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class UserController implements UserControllerDocs {
     @Override
     public ApiResponse<Void> updateProfile(
             @PathVariable Long userId,
-            @RequestBody UserReqDTO.UserProfileDTO userReqDTO
+            @Valid @RequestBody UserReqDTO.UserProfileDTO userReqDTO
     ) {
         userCommandService.updateUserProfile(userId, userReqDTO);
         return ApiResponse.onSuccess(UserSuccessCode.USER_UPDATED, null);
