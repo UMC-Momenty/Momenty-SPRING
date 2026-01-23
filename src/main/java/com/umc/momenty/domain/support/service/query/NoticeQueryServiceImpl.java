@@ -20,7 +20,7 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
 
     @Override
     public NoticeResDTO.NoticeDTO getNotice(Long noticeId){
-        Notice notice = noticeRepository.findById(noticeId)
+        Notice notice = noticeRepository.findByIdAndActiveTrue(noticeId)
                 .orElseThrow(() -> new NoticeException(NoticeErrorCode.NOTICE_NOT_FOUND));
 
         return NoticeConverter.toNoticeDTO(notice);
@@ -28,7 +28,7 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
 
     @Override
     public NoticeResDTO.NoticePageDTO getAllNotice(Pageable pageable){
-        Page<Notice> page = noticeRepository.findActiveNotices(pageable);
+        Page<Notice> page = noticeRepository.findAllByActiveTrue(pageable);
 
         if(pageable.getPageNumber() >= page.getTotalPages() && page.getTotalPages() > 0){
             throw new NoticeException(NoticeErrorCode.PAGE_OUT_OF_RANGE);

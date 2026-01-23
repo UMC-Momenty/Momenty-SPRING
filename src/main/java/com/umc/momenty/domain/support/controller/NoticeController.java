@@ -28,7 +28,7 @@ public class NoticeController implements NoticeControllerDocs{
         return ApiResponse.onSuccess(NoticeSuccessCode.NOTICE_DETAIL_FOUND,noticeQueryService.getNotice(noticeId));
     }
 
-    @GetMapping("")
+    @GetMapping
     public ApiResponse<NoticeResDTO.NoticePageDTO> getAllNotice(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
