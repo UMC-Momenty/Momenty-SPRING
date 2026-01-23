@@ -11,7 +11,8 @@ public class NoticeResDTO {
     public record NoticeDTO(
             Long noticeId,
             String title,
-            String content
+            String content,
+            LocalDateTime createdAt
     ){}
 
     @Builder

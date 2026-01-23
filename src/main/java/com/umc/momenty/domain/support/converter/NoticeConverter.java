@@ -11,6 +11,7 @@ public class NoticeConverter {
                 .noticeId(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
+                .createdAt(notice.getCreatedAt())
                 .build();
     }
 
