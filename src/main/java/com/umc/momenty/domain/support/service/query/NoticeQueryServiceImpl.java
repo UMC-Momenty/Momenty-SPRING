@@ -8,6 +8,8 @@ import com.umc.momenty.domain.support.exception.NoticeException;
 import com.umc.momenty.domain.support.exception.code.NoticeErrorCode;
 import com.umc.momenty.domain.support.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,5 +24,16 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
                 .orElseThrow(() -> new NoticeException(NoticeErrorCode.NOTICE_NOT_FOUND));
 
         return NoticeConverter.toNoticeDTO(notice);
+    }
+
+    @Override
+    public NoticeResDTO.NoticePageDTO getAllNotice(Pageable pageable){
+        Page<Notice> page = noticeRepository.findActiveNotices(pageable);
+
+        if(pageable.getPageNumber() >= page.getTotalPages() && page.getTotalPages() > 0){
+            throw new NoticeException(NoticeErrorCode.PAGE_OUT_OF_RANGE);
+        }
+
+        return NoticeConverter.toNoticePageDTO(page);
     }
 }
