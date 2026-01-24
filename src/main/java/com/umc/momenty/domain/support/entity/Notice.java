@@ -24,6 +24,6 @@ public class Notice extends BaseEntity {
 
     @Column(name = "is_active", nullable = false)
     @Builder.Default
-    private boolean isActive = true;
+    private boolean active = true;
 
 }
