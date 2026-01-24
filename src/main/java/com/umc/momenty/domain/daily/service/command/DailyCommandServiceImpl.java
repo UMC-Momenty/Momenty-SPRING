@@ -45,6 +45,10 @@ public class DailyCommandServiceImpl implements DailyCommandService {
 		DailyQuestion dailyQuestion = dailyQuestionRepository.findById(answerDTO.questId())
 			.orElseThrow(() -> new DailyException(DailyErrorCode.QUESTION_NOT_FOUND));
 
+		if (dailyAnswerRepository.existsByUserAndPetAndDailyQuestion(user, pet, dailyQuestion)) {
+			throw new DailyException(DailyErrorCode.EXIST_DAILY_ANSWER);
+		}
+
 		DailyAnswer dailyAnswer = DailyConverter.toDailyAnswer(user, pet, dailyQuestion, answerDTO.answer());
 		dailyAnswerRepository.save(dailyAnswer);
 	}

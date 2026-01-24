@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.umc.momenty.domain.daily.entity.DailyAnswer;
+import com.umc.momenty.domain.daily.entity.DailyQuestion;
+import com.umc.momenty.domain.pet.entity.Pet;
+import com.umc.momenty.domain.user.entity.User;
 
 public interface DailyAnswerRepository extends JpaRepository<DailyAnswer, Long> {
 	@Query("""
@@ -17,4 +20,6 @@ public interface DailyAnswerRepository extends JpaRepository<DailyAnswer, Long> 
     and da.createdAt between :start and :end
 """)
 	List<DailyAnswer> findAllByUserIdAndCreatedAtBetween(Long userId, LocalDateTime start, LocalDateTime end);
+
+	boolean existsByUserAndPetAndDailyQuestion(User user, Pet pet, DailyQuestion dailyQuestion);
 }
