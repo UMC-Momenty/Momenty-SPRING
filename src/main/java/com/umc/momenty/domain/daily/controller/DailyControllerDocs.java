@@ -1,5 +1,9 @@
 package com.umc.momenty.domain.daily.controller;
 
+import java.util.List;
+
+import org.springdoc.core.annotations.ParameterObject;
+
 import com.umc.momenty.domain.daily.dto.req.DailyReqDTO;
 import com.umc.momenty.domain.daily.dto.res.DailyResDTO;
 import com.umc.momenty.global.apiPayload.ApiResponse;
@@ -8,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 
 public interface DailyControllerDocs {
 
@@ -27,6 +32,7 @@ public interface DailyControllerDocs {
 	ApiResponse<Void> createDailyAnswer(
 		@Parameter(description = "사용자 ID")
 		Long userId,
+
 		@RequestBody(
 			description = """
 				프로필 추가 내용
@@ -37,6 +43,19 @@ public interface DailyControllerDocs {
 				""",
 			required = true
 		)
-		DailyReqDTO.AnswerDTO answerDTO
+		@Valid DailyReqDTO.AnswerDTO answerDTO
+	);
+
+	@Operation(summary = "질문 답변 조회 API", description = "기간 안에 해당되는 질문들의 답변을 조회합니다.")
+	@ApiResponses({
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패"),
+	})
+	ApiResponse<List<DailyResDTO.QuestionAnswerDTO>> getAnswerList(
+		@Parameter(description = "사용자 ID")
+		Long userId,
+
+		@ParameterObject
+		@Valid DailyReqDTO.DateRangeDTO dateRangeDTO
 	);
 }

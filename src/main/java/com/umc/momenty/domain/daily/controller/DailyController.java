@@ -1,5 +1,7 @@
 package com.umc.momenty.domain.daily.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +33,7 @@ public class DailyController implements DailyControllerDocs{
 		return ApiResponse.onSuccess(DailySuccessCode.QUESTION_FOUND, dailyQueryService.getTodayQuestion());
 	}
 
-	@PostMapping("/users/{userId}/answer")
+	@PostMapping("/users/{userId}/answers")
 	@Override
 	public ApiResponse<Void> createDailyAnswer(
 		@PathVariable Long userId,
@@ -39,5 +41,14 @@ public class DailyController implements DailyControllerDocs{
 	) {
 		dailyCommandService.createDailyAnswer(userId, answerDTO);
 		return ApiResponse.onSuccess(DailySuccessCode.ANSWER_CREATED, null);
+	}
+
+	@GetMapping("/users/{userId}/answers")
+	@Override
+	public ApiResponse<List<DailyResDTO.QuestionAnswerDTO>> getAnswerList(
+		@PathVariable Long userId,
+		@Valid DailyReqDTO.DateRangeDTO dateRangeDTO
+	) {
+		return ApiResponse.onSuccess(DailySuccessCode.ANSWER_FOUND, dailyQueryService.getAnswerList(userId, dateRangeDTO));
 	}
 }

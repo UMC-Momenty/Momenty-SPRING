@@ -1,8 +1,20 @@
 package com.umc.momenty.domain.daily.repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.umc.momenty.domain.daily.entity.DailyAnswer;
 
 public interface DailyAnswerRepository extends JpaRepository<DailyAnswer, Long> {
+	@Query("""
+    select da
+    from DailyAnswer da
+    join fetch da.dailyQuestion dq
+    where da.user.id = :userId
+    and da.createdAt between :start and :end
+""")
+	List<DailyAnswer> findAllByUserIdAndCreatedAtBetween(Long userId, LocalDateTime start, LocalDateTime end);
 }

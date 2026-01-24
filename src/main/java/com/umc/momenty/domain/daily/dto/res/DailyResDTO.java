@@ -12,4 +12,13 @@ public class DailyResDTO {
 			LocalDate date,
 			String quest
 	){}
+
+	@Builder
+	public record QuestionAnswerDTO(
+			Long questId,
+			Long answerId,
+			LocalDate date,
+			String quest,
+			String answer
+	){}
 }

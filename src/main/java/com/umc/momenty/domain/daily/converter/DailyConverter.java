@@ -24,4 +24,14 @@ public class DailyConverter {
 			.dailyQuestion(dailyQuestion)
 			.build();
 	}
+
+	public static DailyResDTO.QuestionAnswerDTO toQuestionAnswerDTO(DailyAnswer dailyAnswer) {
+		return DailyResDTO.QuestionAnswerDTO.builder()
+			.answerId(dailyAnswer.getId())
+			.answer(dailyAnswer.getAnswer())
+			.questId(dailyAnswer.getDailyQuestion().getId())
+			.quest(dailyAnswer.getDailyQuestion().getQuestion())
+			.date(dailyAnswer.getCreatedAt().toLocalDate())
+			.build();
+	}
 }
