@@ -3,6 +3,7 @@ package com.umc.momenty.global.config;
 
 import com.umc.momenty.global.jwt.JwtFilter;
 import com.umc.momenty.global.jwt.JwtUtil;
+import com.umc.momenty.global.oauth.handler.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final CustomAccessDeniedHandler accessDeniedHandler;
     private final JwtUtil jwtUtil;
 
     @Bean
@@ -29,6 +31,9 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(ex -> ex
+                                .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(

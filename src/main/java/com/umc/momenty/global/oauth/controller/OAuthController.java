@@ -8,15 +8,12 @@ import com.umc.momenty.global.oauth.exception.code.OAuthSuccessCode;
 import com.umc.momenty.global.oauth.service.CustomOAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/oauth")
-public class OAuthController {
+public class OAuthController implements OAuthControllerDocs{
 
     private final CustomOAuthService customOAuthService;
 
@@ -27,9 +24,8 @@ public class OAuthController {
     }
 
     @PostMapping("/reissue")
-    public ApiResponse<TokenDto> reissueToken(HttpServletRequest request) {
-        String refreshToken = request.getHeader("X-Refresh-Token");
-        TokenDto tokenDto = customOAuthService.reissueToken(refreshToken);
+    public ApiResponse<TokenDto> reissueToken(@RequestHeader("X-Refresh-Token") String token) {
+        TokenDto tokenDto = customOAuthService.reissueToken(token);
         return ApiResponse.onSuccess(OAuthSuccessCode.OAUTH_REISSUE_SUCCESS, tokenDto);
     }
 
