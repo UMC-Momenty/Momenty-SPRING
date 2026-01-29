@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum InquirySuccessCode implements BaseSuccessCode {
     INQUIRY_DETAIL_FOUND(HttpStatus.OK, "INQUIRY200-1", "성공적으로 문의내역을 상세 조회하였습니다."),
-    INQUIRY_LIST_FOUND(HttpStatus.OK, "INQUIRY200-2", "성공적으로 문의내역 목록을 조회하였습니다.");
+    INQUIRY_LIST_FOUND(HttpStatus.OK, "INQUIRY200-2", "성공적으로 문의내역 목록을 조회하였습니다."),
+    INQUIRY_CREATED(HttpStatus.CREATED, "INQUIRY201-1","성공적으로 문의를 추가했습니다.");
 
     private final HttpStatus status;
     private final String code;

@@ -40,5 +40,11 @@ public class Inquiry extends BaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "inquiry", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<InquiryImage> images = new ArrayList<>();
+
+    public void addImage(InquiryImage image){
+        images.add(image);
+        image.assignInquiry(this);
+    }
 }
