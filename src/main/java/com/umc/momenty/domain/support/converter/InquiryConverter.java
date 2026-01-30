@@ -5,6 +5,8 @@ import com.umc.momenty.domain.support.dto.res.InquiryResDTO;
 import com.umc.momenty.domain.support.entity.Inquiry;
 import com.umc.momenty.domain.support.entity.InquiryImage;
 import com.umc.momenty.domain.user.entity.User;
+import com.umc.momenty.global.converter.PageConverter;
+import org.springframework.data.domain.Page;
 
 public class InquiryConverter {
 
@@ -49,5 +51,25 @@ public class InquiryConverter {
         }
 
         return inquiry;
+    }
+
+    public static InquiryResDTO.InquiryListDTO toInquiryListDTO(Inquiry inquiry){
+        return InquiryResDTO.InquiryListDTO.builder()
+                .inquiryId(inquiry.getId())
+                .type(inquiry.getType())
+                .isAnswered(inquiry.isAnswered())
+                .createdAt(inquiry.getCreatedAt())
+                .build();
+    }
+
+    public static InquiryResDTO.InquiryPageDTO toInquiryPageDTO(Page<Inquiry> page){
+        return InquiryResDTO.InquiryPageDTO.builder()
+                .inquiries(
+                        page.getContent().stream()
+                                .map(InquiryConverter::toInquiryListDTO)
+                                .toList()
+                )
+                .pageInfo(PageConverter.toPageInfoDTO(page))
+                .build();
     }
 }

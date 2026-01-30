@@ -4,7 +4,10 @@ import com.umc.momenty.domain.support.dto.req.InquiryReqDTO;
 import com.umc.momenty.domain.support.dto.res.InquiryResDTO;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
 
 public interface InquiryControllerDocs {
 
@@ -30,4 +33,21 @@ public interface InquiryControllerDocs {
                                             required = true
                                     )
                                     InquiryReqDTO.InquiryDTO inquiryDTO);
+
+    @Operation(summary = "문의내역 리스트 조회 API",
+            description = """
+                해당 사용자의 전체 문의내역을 페이지네이션으로 조회합니다.
+
+                - page : 페이지 번호 (0부터 시작)
+                - size : 페이지 크기
+                - sort : 정렬 기준 (예: createdAt,desc)
+                """
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "요청한 페이지가 범위를 벗어난 경우")
+    })
+    ApiResponse<InquiryResDTO.InquiryPageDTO> getAllInquiry(
+            Long userId,
+            @ParameterObject @Parameter(description = "페이지네이션 정보 (page, size, sort)") Pageable pageable);
 }

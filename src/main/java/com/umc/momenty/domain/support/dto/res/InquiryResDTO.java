@@ -1,6 +1,7 @@
 package com.umc.momenty.domain.support.dto.res;
 
 import com.umc.momenty.domain.support.enums.InquiryCategory;
+import com.umc.momenty.global.dto.res.PageResDTO;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -23,5 +24,19 @@ public class InquiryResDTO {
     public record InquiryImageDTO(
             Long inquiryImageId,
             String imageUrl
+    ){}
+
+    @Builder
+    public record InquiryListDTO(
+            Long inquiryId,
+            InquiryCategory type,
+            boolean isAnswered,
+            LocalDateTime createdAt
+    ){}
+
+    @Builder
+    public record InquiryPageDTO(
+            List<InquiryListDTO> inquiries,
+            PageResDTO.PageInfoDTO pageInfo
     ){}
 }
