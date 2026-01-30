@@ -1,5 +1,6 @@
 package com.umc.momenty.domain.support.dto.res;
 
+import com.umc.momenty.global.dto.res.PageResDTO;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -23,18 +24,8 @@ public class NoticeResDTO {
     ){}
 
     @Builder
-    public record PageInfoDTO(
-            int page,
-            int size,
-            int totalPages,
-            long totalElements,
-            boolean hasNext,
-            boolean hasPrevious
-    ) {}
-
-    @Builder
     public record NoticePageDTO(
             List<NoticeListDTO> notices,
-            PageInfoDTO pageInfo
+            PageResDTO.PageInfoDTO pageInfo
     ) {}
 }

@@ -2,6 +2,7 @@ package com.umc.momenty.domain.support.converter;
 
 import com.umc.momenty.domain.support.dto.res.NoticeResDTO;
 import com.umc.momenty.domain.support.entity.Notice;
+import com.umc.momenty.global.converter.PageConverter;
 import org.springframework.data.domain.Page;
 
 public class NoticeConverter {
@@ -23,17 +24,6 @@ public class NoticeConverter {
                 .build();
     }
 
-    public static NoticeResDTO.PageInfoDTO toPageInfoDTO(Page<?> page) {
-        return NoticeResDTO.PageInfoDTO.builder()
-                .page(page.getNumber())
-                .size(page.getSize())
-                .totalPages(page.getTotalPages())
-                .totalElements(page.getTotalElements())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .build();
-    }
-
     public static NoticeResDTO.NoticePageDTO toNoticePageDTO(Page<Notice> page) {
         return NoticeResDTO.NoticePageDTO.builder()
                 .notices(
@@ -41,7 +31,7 @@ public class NoticeConverter {
                                 .map(NoticeConverter::toNoticeListDTO)
                                 .toList()
                 )
-                .pageInfo(toPageInfoDTO(page))
+                .pageInfo(PageConverter.toPageInfoDTO(page))
                 .build();
     }
 }
