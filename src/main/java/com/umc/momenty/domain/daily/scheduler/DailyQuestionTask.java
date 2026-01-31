@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.umc.momenty.domain.daily.entity.DailyQuestion;
 import com.umc.momenty.domain.daily.repository.DailyQuestionRepository;
-import com.umc.momenty.global.infra.GeminiProvider;
+import com.umc.momenty.global.infra.gemini.GeminiProvider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
