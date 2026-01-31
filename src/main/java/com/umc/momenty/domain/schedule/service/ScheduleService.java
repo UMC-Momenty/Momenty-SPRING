@@ -24,7 +24,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,21 +78,36 @@ public class ScheduleService {
     }
     // 4. 일별 일정 조회
     public ScheduleResDTO.DailyScheduleResponseDTO getDailyScheduleByPet(Long petId, LocalDate date) {
-        if (!petRepository.existsById(petId)) {
-            throw new PetException(PetErrorCode.PET_NOT_FOUND);
-        }
+        // [수정] 검증 로직 통일 (existsById -> findById.orElseThrow)
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new PetException(PetErrorCode.PET_NOT_FOUND));
 
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
         List<Schedule> schedules = scheduleRepository.findAllByPetAndDate(petId, startOfDay, endOfDay);
 
-        // Schedule -> DTO 변환 (Alarm 메모 조회 포함)
+        // [수정] N+1 문제 해결 로직
+        // 1. 스케줄 리스트가 비어있으면 바로 리턴
+        if (schedules.isEmpty()) {
+            return ScheduleConverter.toDailyScheduleResponseDTO(petId, date, Collections.emptyList());
+        }
+
+        // 2. 조회된 스케줄들의 ID를 이용해 알람들을 한 번에 조회 (IN 쿼리)
+        List<Alarm> alarms = alarmRepository.findAllByScheduleIn(schedules);
+
+        // 3. 알람을 Map으로 변환 (Key: Schedule, Value: Memo) -> 조회 속도 O(1)
+        Map<Schedule, String> alarmMemoMap = alarms.stream()
+                .collect(Collectors.toMap(
+                        Alarm::getSchedule,
+                        Alarm::getMemo,
+                        (existing, replacement) -> existing // 중복 키 발생 시 기존 값 유지
+                ));
+
+        // 4. DTO 변환 (Map에서 메모 가져오기)
         List<ScheduleResDTO.DailyScheduleDTO> dtos = schedules.stream()
                 .map(schedule -> {
-                    // 해당 스케줄의 알람 조회 (간소화를 위해 첫 번째 알람의 메모 사용)
-                    Alarm alarm = alarmRepository.findBySchedule(schedule).orElse(null);
-                    String memo = (alarm != null) ? alarm.getMemo() : null;
+                    String memo = alarmMemoMap.get(schedule); // DB 조회 없이 Map에서 획득
                     return ScheduleConverter.toDailyScheduleDTO(schedule, memo);
                 })
                 .collect(Collectors.toList());
