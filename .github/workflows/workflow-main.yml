@@ -1,0 +1,77 @@
+name: CI/CD PipeLine (main)
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: application.yml 추가
+        run: |
+          mkdir -p src/main/resources
+          cat <<EOF > src/main/resources/application.yml
+          ${{ secrets.APPLICATION_YML_MAIN }}
+          EOF
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Docker Build
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME_MAIN }} .
+
+      - name: Docker Push
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGENAME_MAIN }}
+
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: docker-compose.yml 추가
+        run: |
+          cat <<EOF > docker-compose.yml
+          ${{ secrets.DOCKER_COMPOSE}}
+          EOF
+
+      - name: 파일을 EC2로 복사
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST_MAIN }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY_MAIN }}
+          source: "docker-compose.yml"
+          target: "/home/ubuntu/app"
+
+      - name: EC2에 Docker Image 배포
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST_MAIN }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY_MAIN }}
+          port: 22
+          timeout: 60s
+          script: |
+            mkdir -p /home/ubuntu/app
+            cd /home/ubuntu/app
+            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
+            sudo docker-compose pull
+            sudo docker-compose up -d --remove-orphans
