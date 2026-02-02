@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,30 +22,38 @@ public class S3Service {
     private String bucketName;
 
     // 업로드 Presigned URL 생성
-    public PresignedUrlResponse generatePresignedUploadUrl(String key) {
-        Date expiration = new Date();
-        expiration.setTime(expiration.getTime() + 1000 * 60 * 10); // 10분 후 만료
+    public PresignedUrlResponse generatePresignedUploadUrl(String prefix, String contentType) {
+        String fileName = UUID.randomUUID().toString();
+        String key = String.format("%s/%s", prefix, fileName);
 
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+        GeneratePresignedUrlRequest request =
                 new GeneratePresignedUrlRequest(bucketName, key)
-                        .withMethod(HttpMethod.PUT) // PUT 요청 (업로드)
-                        .withExpiration(expiration);
+                        .withMethod(HttpMethod.PUT)
+                        .withExpiration(getExpirationTime(10));
 
-        URL presignedUrl = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+        request.setContentType(contentType);
+        request.addRequestParameter("Content-Type", contentType);
+
+        URL presignedUrl = amazonS3.generatePresignedUrl(request);
         return new PresignedUrlResponse(key, presignedUrl.toString());
     }
 
     // 다운로드 Presigned URL 생성
     public PresignedUrlResponse generatePresignedDownloadUrl(String key) {
-        Date expiration = new Date();
-        expiration.setTime(expiration.getTime() + 1000 * 60 * 10); // 10분 후 만료
-
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, key)
-                        .withMethod(HttpMethod.GET) // GET 요청 (다운로드)
-                        .withExpiration(expiration);
+                        .withMethod(HttpMethod.GET)
+                        .withExpiration(getExpirationTime(10));
 
         URL presignedUrl = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+
         return new PresignedUrlResponse(key, presignedUrl.toString());
+    }
+
+    private Date getExpirationTime(int minutes) {
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime() + (1000L * 60 * minutes);
+        expiration.setTime(expTimeMillis);
+        return expiration;
     }
 }
