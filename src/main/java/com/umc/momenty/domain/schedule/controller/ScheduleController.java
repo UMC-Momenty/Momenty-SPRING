@@ -22,7 +22,7 @@ public class ScheduleController implements ScheduleControllerDocs {
 
     private final ScheduleService scheduleService;
 
-    // 1. 내 펫 목록 조회 (일정 등록 시 사용)
+    // 1. 내 펫 목록 조회
     @GetMapping("/users/{userId}/schedules/pets")
     @Override
     public ApiResponse<ScheduleResDTO.MyPetsResponseDTO> getMyPets(@PathVariable Long userId) {
@@ -49,6 +49,7 @@ public class ScheduleController implements ScheduleControllerDocs {
             @RequestParam @Min(1) @Max(12) int month) {
         return ApiResponse.onSuccess(ScheduleSuccessCode.SCHEDULE_FOUND, scheduleService.getCalendarByPet(userId, petId, year, month));
     }
+
     // 4. 특정 반려동물 일별 일정 조회
     @GetMapping("/pets/{petId}/schedules")
     @Override
@@ -58,12 +59,28 @@ public class ScheduleController implements ScheduleControllerDocs {
         return ApiResponse.onSuccess(ScheduleSuccessCode.SCHEDULE_FOUND, scheduleService.getDailyScheduleByPet(petId, date));
     }
 
-    // 5. 반려동물 일정 생성
+    // 5. 반려동물 일정 생성 (업데이트됨)
     @PostMapping("/pets/{petId}/schedules")
     @Override
     public ApiResponse<ScheduleResDTO.ScheduleIdResponseDTO> registerSchedule(
             @PathVariable Long petId,
             @RequestBody @Valid ScheduleReqDTO.ScheduleCreateDTO request) {
         return ApiResponse.onSuccess(ScheduleSuccessCode.SCHEDULE_CREATED, scheduleService.registerSchedule(petId, request));
+    }
+
+    // [NEW] 6. 알림 목록 조회
+    @GetMapping("/pets/{petId}/alarms")
+    @Override
+    public ApiResponse<ScheduleResDTO.AlarmListDTO> getAlarmList(@PathVariable Long petId) {
+        return ApiResponse.onSuccess(ScheduleSuccessCode.SCHEDULE_FOUND, scheduleService.getAlarmList(petId));
+    }
+
+    // [NEW] 7. 알림 ON/OFF 토글
+    @PatchMapping("/schedules/{scheduleId}/alarm-status")
+    @Override
+    public ApiResponse<ScheduleResDTO.AlarmStatusResponseDTO> toggleAlarmStatus(
+            @PathVariable Long scheduleId,
+            @RequestBody ScheduleReqDTO.AlarmStatusDTO request) {
+        return ApiResponse.onSuccess(ScheduleSuccessCode.SCHEDULE_UPDATED, scheduleService.toggleAlarmStatus(scheduleId, request.getIsAlarmEnabled()));
     }
 }
