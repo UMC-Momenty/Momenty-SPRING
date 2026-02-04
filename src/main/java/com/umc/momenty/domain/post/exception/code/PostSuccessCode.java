@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum PostSuccessCode implements BaseSuccessCode {
-    POST_CREATED(HttpStatus.OK, "POST200-1", "성공적으로 게시글이 생성되었습니다.");
+    POST_CREATED(HttpStatus.OK, "POST200-1", "성공적으로 게시글이 생성되었습니다."),
+    POST_LIST_FOUND(HttpStatus.OK,"POST200-2", "성공적으로 게시글 목록을 조회했습니다.");
 
     private final HttpStatus status;
     private final String code;
