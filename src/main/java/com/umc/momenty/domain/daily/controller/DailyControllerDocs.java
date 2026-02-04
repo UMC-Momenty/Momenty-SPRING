@@ -58,4 +58,14 @@ public interface DailyControllerDocs {
 		@ParameterObject
 		@Valid DailyReqDTO.DateRangeDTO dateRangeDTO
 	);
+
+	@Operation(summary = "질문 답변 작성 여부 API", description = "오늘의 질문에 답변한 상태인지 조회합니다.")
+	@ApiResponses({
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패"),
+	})
+	ApiResponse<DailyResDTO.AnswerStatusDTO> getAnswerList(
+		@Parameter(description = "사용자 ID")
+		Long userId
+	);
 }

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,5 +49,20 @@ public class DailyQueryServiceImpl implements DailyQueryService {
 		return dailyAnswers.stream()
 			.map(DailyConverter::toQuestionAnswerDTO)
 			.toList();
+	}
+
+	@Override
+	public DailyResDTO.AnswerStatusDTO getTodayAnswerStatus(Long userId) {
+		LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+		LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+
+		DailyQuestion dailyQuestion = questionRepository.findFirstByCreatedAtBetween(startOfDay, endOfDay)
+			.orElseThrow(() -> new DailyException(DailyErrorCode.QUESTION_NOT_FOUND));
+
+		Optional<DailyAnswer> optionalDailyAnswer = answerRepository.findByUserIdAndDailyQuestion(userId, dailyQuestion);
+		if (optionalDailyAnswer.isEmpty()) {
+			return DailyConverter.toEmptyAnswerStatusDTO(dailyQuestion);
+		}
+		return DailyConverter.toAnswerStatusDTO(dailyQuestion, optionalDailyAnswer.get());
 	}
 }

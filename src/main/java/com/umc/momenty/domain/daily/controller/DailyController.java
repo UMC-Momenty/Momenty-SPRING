@@ -51,4 +51,12 @@ public class DailyController implements DailyControllerDocs{
 	) {
 		return ApiResponse.onSuccess(DailySuccessCode.ANSWER_FOUND, dailyQueryService.getAnswerList(userId, dateRangeDTO));
 	}
+
+	@GetMapping("/users/{userId}/quest/today/status")
+	@Override
+	public ApiResponse<DailyResDTO.AnswerStatusDTO> getAnswerList(
+		@PathVariable Long userId
+	) {
+		return ApiResponse.onSuccess(DailySuccessCode.ANSWER_STATUS_FOUND, dailyQueryService.getTodayAnswerStatus(userId));
+	}
 }

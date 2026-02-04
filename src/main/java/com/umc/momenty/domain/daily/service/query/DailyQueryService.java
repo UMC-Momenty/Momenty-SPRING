@@ -9,4 +9,6 @@ public interface DailyQueryService {
 	DailyResDTO.QuestionDTO getTodayQuestion();
 
 	List<DailyResDTO.QuestionAnswerDTO> getAnswerList(Long userId, DailyReqDTO.DateRangeDTO dateRangeDTO);
+
+	DailyResDTO.AnswerStatusDTO getTodayAnswerStatus(Long userId);
 }
