@@ -32,7 +32,6 @@ public class S3Service {
                         .withExpiration(getExpirationTime(10));
 
         request.setContentType(contentType);
-        request.addRequestParameter("Content-Type", contentType);
 
         URL presignedUrl = amazonS3.generatePresignedUrl(request);
         return new PresignedUrlResponse(key, presignedUrl.toString());
