@@ -1,6 +1,7 @@
 package com.umc.momenty.domain.pet.converter;
 
 import com.umc.momenty.domain.pet.dto.req.PetReqDTO;
+import com.umc.momenty.domain.pet.dto.res.PetResDTO;
 import com.umc.momenty.domain.pet.entity.Breed;
 import com.umc.momenty.domain.pet.entity.Pet;
 import com.umc.momenty.domain.user.entity.User;
@@ -18,5 +19,15 @@ public class PetConverter {
                 .user(user)
                 .breed(breed)
                 .build();
+    }
+
+    public static PetResDTO.MyPetDTO toMyPetDTO(Pet pet) {
+        return PetResDTO.MyPetDTO.builder()
+            .petId(pet.getId())
+            .petName(pet.getPetName())
+            .species(pet.getBreed().getSpecies())
+            .breedName(pet.getBreed().getName())
+            .profileImageUrl(pet.getProfileImageUrl())
+            .build();
     }
 }

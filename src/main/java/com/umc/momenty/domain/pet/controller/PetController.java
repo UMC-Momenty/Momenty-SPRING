@@ -1,8 +1,12 @@
 package com.umc.momenty.domain.pet.controller;
 
+import java.util.List;
+
 import com.umc.momenty.domain.pet.dto.req.PetReqDTO;
+import com.umc.momenty.domain.pet.dto.res.PetResDTO;
 import com.umc.momenty.domain.pet.exception.code.PetSuccessCode;
 import com.umc.momenty.domain.pet.service.command.PetCommandService;
+import com.umc.momenty.domain.pet.service.query.PetQueryService;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class PetController implements PetControllerDocs {
 
     private final PetCommandService petCommandService;
+    private final PetQueryService petQueryService;
 
     @PostMapping("/users/{userId}/pets")
     @Override
@@ -34,5 +39,13 @@ public class PetController implements PetControllerDocs {
     ) {
         petCommandService.updatePetProfile(userId, petId, petUpdateDTO);
         return ApiResponse.onSuccess(PetSuccessCode.PET_UPDATED, null);
+    }
+
+    @GetMapping("/users/{userId}/pets/my")
+    @Override
+    public ApiResponse<List<PetResDTO.MyPetDTO>> getMyPetList(
+        @PathVariable Long userId
+    ) {
+        return ApiResponse.onSuccess(PetSuccessCode.PET_FOUND, petQueryService.getMyPetList(userId));
     }
 }
