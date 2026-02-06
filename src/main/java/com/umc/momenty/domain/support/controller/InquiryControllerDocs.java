@@ -29,11 +29,11 @@ public interface InquiryControllerDocs {
     })
     ApiResponse<Void> createInquiry(Long userId,
                                     @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                                            description = "문의 추가 요청 (빈 배열이면 사진 미설정, imageUrl는 최대 2장)\n\n"
+                                            description = "문의 추가 요청 (빈 배열이면 사진 미설정, imageKey는 최대 2장, Presigned URL로 요청 시 받은 key 사용)\n\n"
                                                     + "**요청 예시:**\n"
-                                                    + "- type: \"문의 유형 (예: REPORT, BUG 등)\"\n"
+                                                    + "- type: \"문의 유형\" (예: ACCOUNT, PET, SCHEDULE, MOMENT, CHATBOT, NOTIFICATION, POLICY, ETC)\n"
                                                     + "- content: \"이러한 문제가 발생했는데요 ...\"\n"
-                                                    + "- images: \"[{\"imageUrl\" : \"https://example.com/inquiry1.jpg\"},{\"imageUrl\" : \"https://example.com/inquiry2.jpg\"}]\"\n",
+                                                    + "- images: \"[{\"imageKey\" : \"inquiry/0d1d0f96-bf56-4bb8-9c4a-70727a94a368\"},{\"imageUrl\" : \"inquiry/0d1d0f96-bf56-4bb8-9c4a-70727a94a368\"}]\"\n",
                                             required = true
                                     )
                                     InquiryReqDTO.InquiryDTO inquiryDTO);

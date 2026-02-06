@@ -25,7 +25,7 @@ public class InquiryReqDTO {
     @Builder
     public record InquiryImageDTO(
             @NotBlank
-            String imageUrl
+            String imageKey
     ){}
 
     public record InquiryImageCreateDTO(
