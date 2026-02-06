@@ -1,9 +1,8 @@
 package com.umc.momenty.domain.support.dto.req;
 
+import com.umc.momenty.domain.support.enums.ImageContentType;
 import com.umc.momenty.domain.support.enums.InquiryCategory;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 
 import java.util.List;
@@ -27,5 +26,11 @@ public class InquiryReqDTO {
     public record InquiryImageDTO(
             @NotBlank
             String imageUrl
+    ){}
+
+    public record InquiryImageCreateDTO(
+
+            @Size(min = 1, max = 2, message = "이미지는 1~2장만 업로드할 수 있습니다.")
+            List<ImageContentType> imageTypes
     ){}
 }
