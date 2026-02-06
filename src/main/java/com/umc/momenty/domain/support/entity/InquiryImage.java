@@ -23,6 +23,10 @@ public class InquiryImage extends BaseEntity {
     @JoinColumn(name = "inquiry_id", nullable = false)
     private Inquiry inquiry;
 
+    public InquiryImage(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public void assignInquiry(Inquiry inquiry){
         this.inquiry = inquiry;
     }
