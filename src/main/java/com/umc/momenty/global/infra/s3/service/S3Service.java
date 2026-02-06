@@ -21,6 +21,9 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
     // 업로드 Presigned URL 생성
     public PresignedUrlResponse generatePresignedUploadUrl(String prefix, String contentType) {
         String fileName = UUID.randomUUID().toString();
@@ -47,6 +50,10 @@ public class S3Service {
         URL presignedUrl = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
         return new PresignedUrlResponse(key, presignedUrl.toString());
+    }
+
+    public String buildImageUrl(String key) {
+        return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + key;
     }
 
     private Date getExpirationTime(int minutes) {
