@@ -1,4 +1,4 @@
-package com.umc.momenty.domain.support.enums;
+package com.umc.momenty.global.infra.s3.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

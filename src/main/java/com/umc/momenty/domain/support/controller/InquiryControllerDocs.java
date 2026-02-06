@@ -31,7 +31,7 @@ public interface InquiryControllerDocs {
                                     @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                             description = "문의 추가 요청 (빈 배열이면 사진 미설정, imageKey는 최대 2장, Presigned URL로 요청 시 받은 key 사용)\n\n"
                                                     + "**요청 예시:**\n"
-                                                    + "- type: \"문의 유형\" (예: ACCOUNT, PET, SCHEDULE, MOMENT, CHATBOT, NOTIFICATION, POLICY, ETC)\n"
+                                                    + "- type: \"문의 유형\" (예: ACCOUNT, BUG, REPORT, SUGGESTION, ETC)\n"
                                                     + "- content: \"이러한 문제가 발생했는데요 ...\"\n"
                                                     + "- images: \"[{\"imageKey\" : \"inquiry/0d1d0f96-bf56-4bb8-9c4a-70727a94a368\"},{\"imageUrl\" : \"inquiry/0d1d0f96-bf56-4bb8-9c4a-70727a94a368\"}]\"\n",
                                             required = true
