@@ -1,6 +1,6 @@
 package com.umc.momenty.domain.support.dto.req;
 
-import com.umc.momenty.domain.support.enums.ImageContentType;
+import com.umc.momenty.global.infra.s3.enums.ImageContentType;
 import com.umc.momenty.domain.support.enums.InquiryCategory;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
