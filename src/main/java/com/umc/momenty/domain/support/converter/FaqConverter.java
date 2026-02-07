@@ -10,7 +10,6 @@ public class FaqConverter {
     public static FaqResDTO.FaqDTO toFaqDTO(FAQ faq){
         return FaqResDTO.FaqDTO.builder()
                 .faqId(faq.getId())
-                .category(faq.getCategory())
                 .question(faq.getQuestion())
                 .answer(faq.getAnswer())
                 .build();
@@ -19,7 +18,6 @@ public class FaqConverter {
     public static FaqResDTO.FaqListDTO toFaqList(FAQ faq){
         return FaqResDTO.FaqListDTO.builder()
                 .faqId(faq.getId())
-                .category(faq.getCategory())
                 .question(faq.getQuestion())
                 .build();
     }
