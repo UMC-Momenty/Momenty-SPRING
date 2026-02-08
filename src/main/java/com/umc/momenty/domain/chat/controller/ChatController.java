@@ -15,9 +15,15 @@ public class ChatController implements ChatControllerDocs {
 
     private final ChatQueryService chatQueryService;
 
-    @PostMapping("/{userId}")
+    @PostMapping("/users/{userId}")
     @Override
-    public ApiResponse<ChatResDTO.ChatResponse> chat(@PathVariable Long userId, @RequestBody ChatReqDTO.ChatRequest request){
-        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.chat(userId, request.message()));
+    public ApiResponse<ChatResDTO.ChatResponse> firstChat(@PathVariable Long userId, @RequestBody ChatReqDTO.ChatRequest request){
+        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.firstChat(userId, request.message()));
+    }
+
+    @PostMapping("/conversations/{conversationId}")
+    @Override
+    public ApiResponse<ChatResDTO.ChatResponse> chat(@PathVariable Long conversationId, @RequestBody ChatReqDTO.ChatRequest request){
+        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.chat(conversationId, request.message()));
     }
 }
