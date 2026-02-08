@@ -2,6 +2,7 @@ package com.umc.momenty.domain.chat.controller;
 
 import com.umc.momenty.domain.chat.dto.req.ChatReqDTO;
 import com.umc.momenty.domain.chat.dto.res.ChatResDTO;
+import com.umc.momenty.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,5 +15,5 @@ public interface ChatControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "실패")
     })
-    ChatResDTO.ChatResponse chat(@PathVariable Long userId, @RequestBody ChatReqDTO.ChatRequest request);
+    ApiResponse<ChatResDTO.ChatResponse> chat(@PathVariable Long userId, @RequestBody ChatReqDTO.ChatRequest request);
 }
