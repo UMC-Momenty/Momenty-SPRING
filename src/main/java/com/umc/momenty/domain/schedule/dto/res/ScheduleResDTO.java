@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public class ScheduleResDTO {
@@ -45,27 +46,25 @@ public class ScheduleResDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CalendarResponseDTO {
-        private Long petId; // 전체 조회면 null
+        private Long petId;
         private int year;
         private int month;
         private List<DayCountDTO> days;
     }
 
     // 4. 특정 반려동물 일별 일정 조회 응답
-    // 리스트 안의 개별 일정 객체
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DailyScheduleDTO {
         private Long scheduleId;
-        private String title;         // 일정 제목
-        private LocalDateTime startAt; // 시작 일시
-        private String memo;          // 메모
-        private ScheduleCategory category; // 카테고리
+        private String title;
+        private LocalDateTime startAt;
+        private String memo;
+        private ScheduleCategory category;
     }
 
-    // 최종 응답 DTO
     @Builder
     @Getter
     @NoArgsConstructor
@@ -76,14 +75,48 @@ public class ScheduleResDTO {
         private List<DailyScheduleDTO> schedules;
     }
 
-
     // 5. 일정 생성 성공 응답
-
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ScheduleIdResponseDTO {
         private Long scheduleId;
+    }
+
+    // [NEW] 6. 알림 목록 조회용 (리스트 아이템)
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AlarmDTO {
+        private Long scheduleId;
+        private String title;
+        private ScheduleCategory category;
+        private List<String> repeatDays; // ["MONDAY", "WEDNESDAY"]
+        private LocalDate date;          // 일회성이면 날짜 표시
+        private LocalTime alarmTime;
+        private boolean isOneTime;       // 일회성 여부
+        private boolean isAlarmEnabled;  // 스위치 상태
+        private Integer durationMinutes;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AlarmListDTO {
+        private Long petId;
+        private List<AlarmDTO> alarms;
+    }
+
+    // [NEW] 7. 알림 상태 변경 응답
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AlarmStatusResponseDTO {
+        private Long scheduleId;
+        private boolean isAlarmEnabled;
     }
 }
