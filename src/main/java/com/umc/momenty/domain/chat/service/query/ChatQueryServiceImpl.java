@@ -5,6 +5,8 @@ import com.umc.momenty.domain.chat.dto.res.ChatResDTO;
 import com.umc.momenty.domain.chat.entity.Conversation;
 import com.umc.momenty.domain.chat.enums.PetQuestionType;
 import com.umc.momenty.domain.chat.enums.Role;
+import com.umc.momenty.domain.chat.exception.ChatException;
+import com.umc.momenty.domain.chat.exception.code.ChatErrorCode;
 import com.umc.momenty.domain.chat.policy.PetDomainPolicy;
 import com.umc.momenty.domain.chat.policy.PolicyResult;
 import com.umc.momenty.domain.chat.service.command.ChatCommandService;
@@ -43,7 +45,9 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     @Override
     public ChatResDTO.ChatResponse chat(Long userId, String userMessage) {
 
-        Conversation conversation = conservationCommandService.createConversation(userId, userMessage);
+        Conversation conversation = Optional
+                .ofNullable(conservationCommandService.createConversation(userId, userMessage))
+                .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_CREATE_FAILED));
 
         chatCommandService.saveUserChat(userMessage, conversation);
 
@@ -81,6 +85,10 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         // 프롬프트 + Gemini
         String prompt = promptBuilder.build(type, context);
         String aiMessage = geminiProvider.generateTextContent(prompt, userMessage);
+
+        if (aiMessage == null || aiMessage.isBlank()) {
+            throw new ChatException(ChatErrorCode.AI_RESPONSE_FAILED);
+        }
 
         String finalAnswer = appendDisclaimerIfNeeded(type, aiMessage);
 
