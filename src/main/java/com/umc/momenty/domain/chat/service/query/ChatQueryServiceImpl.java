@@ -9,6 +9,7 @@ import com.umc.momenty.domain.chat.exception.ChatException;
 import com.umc.momenty.domain.chat.exception.code.ChatErrorCode;
 import com.umc.momenty.domain.chat.policy.PetDomainPolicy;
 import com.umc.momenty.domain.chat.policy.PolicyResult;
+import com.umc.momenty.domain.chat.repository.ConversationRepository;
 import com.umc.momenty.domain.chat.service.command.ChatCommandService;
 import com.umc.momenty.domain.chat.service.command.ConservationCommandService;
 import com.umc.momenty.domain.chat.specialization.classifier.PetQuestionTypeResolver;
@@ -39,15 +40,27 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     private final ChatCommandService chatCommandService;
 
     private final ConservationCommandService conservationCommandService;
+    private final ConversationRepository conservationRepository;
 
     private final ChatConverter chatConverter;
 
     @Override
-    public ChatResDTO.ChatResponse chat(Long userId, String userMessage) {
+    public ChatResDTO.ChatResponse firstChat(Long userId, String userMessage) {
+        Conversation conversation = conservationCommandService.createConversation(userId, userMessage);
 
-        Conversation conversation = Optional
-                .ofNullable(conservationCommandService.createConversation(userId, userMessage))
-                .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_CREATE_FAILED));
+        return processChat(conversation, userMessage);
+    }
+
+    @Override
+    public ChatResDTO.ChatResponse chat(Long conversationId, String userMessage) {
+
+        Conversation conversation = conservationRepository.findById(conversationId)
+                        .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_NOT_FOUND));
+
+        return processChat(conversation, userMessage);
+    }
+
+    private ChatResDTO.ChatResponse processChat(Conversation conversation, String userMessage) {
 
         chatCommandService.saveUserChat(userMessage, conversation);
 
