@@ -32,6 +32,10 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PostCategory category;
 
+    @Column(name = "is_anonymous", nullable = false)
+    @Builder.Default
+    private boolean isAnonymous = false;
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
@@ -54,6 +58,10 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Comment> comments = new ArrayList<>();
 
     public void addPostImage(PostImage postImage) {
         postImages.add(postImage);

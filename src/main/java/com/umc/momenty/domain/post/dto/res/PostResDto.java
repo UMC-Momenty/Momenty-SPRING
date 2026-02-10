@@ -28,4 +28,28 @@ public class PostResDto {
             PageResDTO.PageInfoDTO pageInfo
     ) {}
 
+    @Builder
+    public record PostDetailDTO(
+            Long postId,
+            PostCategory category,
+            String title,
+            String content,
+            String authorName,
+            boolean isAnonymous,
+            LocalDateTime createdAt,
+            List<String> imageUrls,
+            int likeNum,
+            int commentNum,
+            boolean isLiked,
+            List<CommentDTO> comments
+    ) {}
+
+    @Builder
+    public record CommentDTO(
+            Long commentId,
+            Long parentCommentId,
+            String authorName,
+            String content,
+            LocalDateTime createdAt
+    ) {}
 }
