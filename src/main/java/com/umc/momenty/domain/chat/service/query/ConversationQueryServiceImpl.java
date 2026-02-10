@@ -15,11 +15,9 @@ import com.umc.momenty.domain.user.exception.code.UserErrorCode;
 import com.umc.momenty.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ConversationQueryServiceImpl implements ConversationQueryService {
 
 	private final ConversationRepository conversationRepository;
@@ -32,11 +30,29 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
 
 		List<Conversation> conversations;
 
-		log.info("id: {}, date: {}", cursorId, cursorLastChatDate);
 		if (cursorId == null || cursorLastChatDate == null) {
 			conversations = conversationRepository.findFirstPage(user, count);
 		} else {
 			conversations = conversationRepository.findByUserAndCursorAndCount(user, cursorId, cursorLastChatDate, count);
+		}
+
+		return conversations.stream()
+			.map(ConversationConverter::toConversationListDTO)
+			.toList();
+	}
+
+	@Override
+	public List<ChatResDTO.ConversationListDTO> searchConversationList(Long userId, String keyword, Long cursorId,
+		LocalDateTime cursorLastChatDate, Long count) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+		List<Conversation> conversations;
+
+		if (cursorId == null || cursorLastChatDate == null) {
+			conversations = conversationRepository.searchKeywordFirstPage(user, keyword, count);
+		} else {
+			conversations = conversationRepository.searchKeywordByUserAndCursorAndCount(user, keyword, cursorId, cursorLastChatDate, count);
 		}
 
 		return conversations.stream()

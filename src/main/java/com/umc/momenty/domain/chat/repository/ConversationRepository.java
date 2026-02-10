@@ -31,4 +31,34 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     LIMIT :count
 """)
 	List<Conversation> findFirstPage(User user, Long count);
+
+	@Query("""
+    SELECT DISTINCT c
+    FROM Chat ch
+    JOIN ch.conversation c
+    WHERE c.user = :user
+    AND ch.content LIKE CONCAT('%', :keyword, '%')
+    ORDER BY c.updatedAt DESC, c.id DESC
+    LIMIT :count
+""")
+	List<Conversation> searchKeywordFirstPage(User user, String keyword, Long count);
+
+	@Query("""
+    SELECT DISTINCT c
+    FROM Chat ch
+    JOIN ch.conversation c
+    WHERE
+    	c.user = :user
+        AND ch.content LIKE CONCAT('%', :keyword, '%')
+        AND (
+            c.updatedAt < :cursorLastChatDate
+            OR (
+                c.updatedAt = :cursorLastChatDate
+                AND c.id < :cursorId
+            )
+        )
+    ORDER BY c.updatedAt DESC, c.id DESC
+    LIMIT :count
+""")
+	List<Conversation> searchKeywordByUserAndCursorAndCount(User user, String keyword, Long cursorId, LocalDateTime cursorLastChatDate, Long count);
 }

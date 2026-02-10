@@ -43,4 +43,16 @@ public class ChatController implements ChatControllerDocs {
         @RequestParam Long count) {
         return ApiResponse.onSuccess(ChatSuccessCode.CONVERSATION_FOUND, conversationQueryService.getConversationList(userId, cursorId, cursorLastChatDate, count));
     }
+
+    @GetMapping("/users/{userId}/conversations/search")
+    @Override
+    public ApiResponse<List<ChatResDTO.ConversationListDTO>> searchConversationList(
+        @PathVariable Long userId,
+        @RequestParam String keyword,
+        @RequestParam(required = false) Long cursorId,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursorLastChatDate,
+        @RequestParam Long count
+    ) {
+        return ApiResponse.onSuccess(ChatSuccessCode.CONVERSATION_FOUND, conversationQueryService.searchConversationList(userId, keyword, cursorId, cursorLastChatDate, count));
+    }
 }

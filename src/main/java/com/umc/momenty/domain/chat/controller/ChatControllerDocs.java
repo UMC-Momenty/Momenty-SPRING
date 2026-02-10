@@ -46,4 +46,25 @@ public interface ChatControllerDocs {
 
         @Parameter(description = "조회할 채팅방 개수")
         @RequestParam Long count);
+
+    @Operation(summary = "채팅방 검색 API", description = "특정 키워드가 포함된 채팅방 목록을 검색합니다. 커서 방식으로 가장 최신의 채팅방들을 가져옵니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패")
+    })
+    ApiResponse<List<ChatResDTO.ConversationListDTO>> searchConversationList(
+        @Parameter(description = "사용자 ID")
+        @PathVariable Long userId,
+
+        @Parameter(description = "검색할 키워드")
+        @RequestParam String keyword,
+
+        @Parameter(description = "가장 마지막으로 받은 채팅방 ID")
+        @RequestParam Long cursorId,
+
+        @Parameter(description = "가장 마지막으로 받은 채팅방의 최근 채팅 시간")
+        @RequestParam LocalDateTime cursorLastChatDate,
+
+        @Parameter(description = "조회할 채팅방 개수")
+        @RequestParam Long count);
 }
