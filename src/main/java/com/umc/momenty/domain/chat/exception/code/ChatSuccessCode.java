@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ChatSuccessCode implements BaseSuccessCode {
 
-    CHAT_CREATED(HttpStatus.CREATED, "CHAT201-1","성공적으로 대화를 추가했습니다.");
+    CHAT_CREATED(HttpStatus.CREATED, "CHAT201-1","성공적으로 대화를 추가했습니다."),
+    CONVERSATION_FOUND(HttpStatus.OK, "CHAT-200-1", "성공적으로 채팅방을 조회했습니다.");
 
     private final HttpStatus status;
     private final String code;
