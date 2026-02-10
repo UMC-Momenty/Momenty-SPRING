@@ -23,4 +23,12 @@ public class ChatResDTO {
 			String lastMessage,
 			LocalDateTime lastChatDate
 	){}
+
+	@Builder
+	public record SearchChatDTO (
+			Long chatId,
+			Role role,
+			String content,
+			LocalDateTime createdAt
+	){}
 }

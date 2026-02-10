@@ -2,6 +2,7 @@ package com.umc.momenty.domain.chat.service.query;
 
 import com.umc.momenty.domain.chat.converter.ChatConverter;
 import com.umc.momenty.domain.chat.dto.res.ChatResDTO;
+import com.umc.momenty.domain.chat.entity.Chat;
 import com.umc.momenty.domain.chat.entity.Conversation;
 import com.umc.momenty.domain.chat.enums.PetQuestionType;
 import com.umc.momenty.domain.chat.enums.Role;
@@ -9,6 +10,7 @@ import com.umc.momenty.domain.chat.exception.ChatException;
 import com.umc.momenty.domain.chat.exception.code.ChatErrorCode;
 import com.umc.momenty.domain.chat.policy.PetDomainPolicy;
 import com.umc.momenty.domain.chat.policy.PolicyResult;
+import com.umc.momenty.domain.chat.repository.ChatRepository;
 import com.umc.momenty.domain.chat.repository.ConversationRepository;
 import com.umc.momenty.domain.chat.service.command.ChatCommandService;
 import com.umc.momenty.domain.chat.service.command.ConservationCommandService;
@@ -19,10 +21,15 @@ import com.umc.momenty.domain.chat.specialization.prompt.PetChatPromptBuilder;
 import com.umc.momenty.domain.support.entity.FAQ;
 import com.umc.momenty.domain.support.enums.FaqCategory;
 import com.umc.momenty.domain.support.service.query.FaqQueryService;
+import com.umc.momenty.domain.user.entity.User;
+import com.umc.momenty.domain.user.exception.UserException;
+import com.umc.momenty.domain.user.exception.code.UserErrorCode;
+import com.umc.momenty.domain.user.repository.UserRepository;
 import com.umc.momenty.global.infra.gemini.GeminiProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +50,8 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     private final ConversationRepository conservationRepository;
 
     private final ChatConverter chatConverter;
+    private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
     @Override
     public ChatResDTO.ChatResponse firstChat(Long userId, String userMessage) {
@@ -58,6 +67,20 @@ public class ChatQueryServiceImpl implements ChatQueryService {
                         .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_NOT_FOUND));
 
         return processChat(conversation, userMessage);
+    }
+
+    @Override
+    public List<ChatResDTO.SearchChatDTO> searchChatList(Long userId, Long conversationId, String keyword) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        Conversation conversation = conservationRepository.findById(conversationId)
+            .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_NOT_FOUND));
+
+        List<Chat> chatList = chatRepository.searchByUserAndKeyword(user, conversation, keyword);
+        return chatList.stream()
+            .map(ChatConverter::toSearchChatDTO)
+            .toList();
     }
 
     private ChatResDTO.ChatResponse processChat(Conversation conversation, String userMessage) {

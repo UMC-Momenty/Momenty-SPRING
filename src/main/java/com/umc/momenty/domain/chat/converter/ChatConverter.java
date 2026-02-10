@@ -34,4 +34,13 @@ public class ChatConverter {
                 .questionType(type)
                 .build();
     }
+
+    public static ChatResDTO.SearchChatDTO toSearchChatDTO(Chat chat) {
+        return ChatResDTO.SearchChatDTO.builder()
+            .chatId(chat.getId())
+            .role(chat.getRole())
+            .content(chat.getContent())
+            .createdAt(chat.getCreatedAt())
+            .build();
+    }
 }

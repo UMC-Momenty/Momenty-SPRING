@@ -55,4 +55,14 @@ public class ChatController implements ChatControllerDocs {
     ) {
         return ApiResponse.onSuccess(ChatSuccessCode.CONVERSATION_FOUND, conversationQueryService.searchConversationList(userId, keyword, cursorId, cursorLastChatDate, count));
     }
+
+    @GetMapping("/users/{userId}/conversations/{conversationId}/search")
+    @Override
+    public ApiResponse<List<ChatResDTO.SearchChatDTO>> searchChatList(
+        @PathVariable Long userId,
+        @PathVariable Long conversationId,
+        @RequestParam String keyword
+    ) {
+        return ApiResponse.onSuccess(ChatSuccessCode.CONVERSATION_FOUND, chatQueryService.searchChatList(userId, conversationId, keyword));
+    }
 }

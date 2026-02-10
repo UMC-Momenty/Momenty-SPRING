@@ -67,4 +67,19 @@ public interface ChatControllerDocs {
 
         @Parameter(description = "조회할 채팅방 개수")
         @RequestParam Long count);
+
+    @Operation(summary = "채팅 검색 API", description = "채팅방 내에서 특정 키워드가 포함된 모든 채팅 목록을 검색합니다.")
+    @ApiResponses({
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패")
+    })
+    ApiResponse<List<ChatResDTO.SearchChatDTO>> searchChatList(
+        @Parameter(description = "사용자 ID")
+        @PathVariable Long userId,
+
+        @Parameter(description = "채팅방 ID")
+        @PathVariable Long conversationId,
+
+        @Parameter(description = "검색할 키워드")
+        @RequestParam String keyword);
 }
