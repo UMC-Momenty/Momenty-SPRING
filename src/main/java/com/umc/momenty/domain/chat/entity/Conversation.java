@@ -26,4 +26,8 @@ public class Conversation extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void updateLastMessage(String message) {
+        this.content = message.length() > 50 ? message.substring(0, 50) + "..." : message;
+    }
 }
