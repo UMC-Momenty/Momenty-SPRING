@@ -9,6 +9,6 @@ public interface GeminiProvider {
 
 	// s3Urls :
 	// <S3_Presigned_Url, MimeType>
-	// ex) <"https://momenty....png", MimeType.Image.PNG>
-	String generateTextContentWithFiles(String systemMessage, String userMessage, Map<String, MimeType.MimeTypeExtension> s3Urls);
+	// ex) <"https://momenty....png", MimeType.PNG>
+	String generateTextContentWithFiles(String systemMessage, String userMessage, Map<String, MimeType> s3Urls);
 }

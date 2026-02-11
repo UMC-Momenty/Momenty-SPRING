@@ -6,9 +6,13 @@ import java.util.List;
 import com.umc.momenty.domain.chat.dto.req.ChatReqDTO;
 import com.umc.momenty.domain.chat.dto.res.ChatResDTO;
 import com.umc.momenty.domain.chat.exception.code.ChatSuccessCode;
+import com.umc.momenty.domain.chat.service.command.AttachmentCommandService;
 import com.umc.momenty.domain.chat.service.query.ChatQueryService;
 import com.umc.momenty.domain.chat.service.query.ConversationQueryService;
 import com.umc.momenty.global.apiPayload.ApiResponse;
+import com.umc.momenty.global.infra.s3.dto.response.PresignedUrlResponse;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,17 +25,24 @@ public class ChatController implements ChatControllerDocs {
 
     private final ChatQueryService chatQueryService;
     private final ConversationQueryService conversationQueryService;
+    private final AttachmentCommandService attachmentCommandService;
 
     @PostMapping("/users/{userId}")
     @Override
     public ApiResponse<ChatResDTO.ChatResponse> firstChat(@PathVariable Long userId, @RequestBody ChatReqDTO.ChatRequest request){
-        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.firstChat(userId, request.message()));
+        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.firstChat(userId, request));
     }
 
     @PostMapping("/conversations/{conversationId}")
     @Override
     public ApiResponse<ChatResDTO.ChatResponse> chat(@PathVariable Long conversationId, @RequestBody ChatReqDTO.ChatRequest request){
-        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.chat(conversationId, request.message()));
+        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.chat(conversationId, request));
+    }
+
+    @PostMapping("/attachment")
+    @Override
+    public ApiResponse<List<PresignedUrlResponse>> createAttachment(@Valid @RequestBody ChatReqDTO.AttachmentCreateDTO request){
+        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_ATTACHMENT_CREATED, attachmentCommandService.generate(request));
     }
 
     @GetMapping("/users/{userId}/conversations")

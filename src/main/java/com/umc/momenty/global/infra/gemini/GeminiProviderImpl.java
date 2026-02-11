@@ -42,7 +42,7 @@ public class GeminiProviderImpl implements GeminiProvider {
 	}
 
 	@Override
-	public String generateTextContentWithFiles(String systemMessage, String userMessage, Map<String, MimeType.MimeTypeExtension> s3Urls) {
+	public String generateTextContentWithFiles(String systemMessage, String userMessage, Map<String, MimeType> s3Urls) {
 		GenerateContentConfig.Builder configBuilder = GenerateContentConfig.builder();
 		if (StringUtils.hasText(systemMessage)) {
 			configBuilder.systemInstruction(Content.fromParts(Part.fromText(systemMessage)));

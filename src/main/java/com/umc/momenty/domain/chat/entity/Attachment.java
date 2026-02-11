@@ -1,6 +1,7 @@
 package com.umc.momenty.domain.chat.entity;
 
-import com.umc.momenty.domain.chat.enums.AttachmentType;
+import com.umc.momenty.global.infra.gemini.enums.MimeType;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,7 @@ public class Attachment {
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    private AttachmentType type;
+    private MimeType type;
 
     @Column(name = "file_url")
     private String fileUrl;
