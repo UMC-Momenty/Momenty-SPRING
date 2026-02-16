@@ -3,6 +3,8 @@ package com.umc.momenty.domain.chat.service.query;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.umc.momenty.domain.chat.converter.ConversationConverter;
@@ -24,16 +26,17 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
 	private final UserRepository userRepository;
 
 	@Override
-	public List<ChatResDTO.ConversationListDTO> getConversationList(Long userId, Long cursorId, LocalDateTime cursorLastChatDate, Long count) {
+	public List<ChatResDTO.ConversationListDTO> getConversationList(Long userId, Long cursorId, LocalDateTime cursorLastChatDate, int count) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
-		List<Conversation> conversations;
+		Pageable pageRequest = PageRequest.of(0, count);
 
+		List<Conversation> conversations;
 		if (cursorId == null || cursorLastChatDate == null) {
-			conversations = conversationRepository.findFirstPage(user, count);
+			conversations = conversationRepository.findFirstPage(user, pageRequest);
 		} else {
-			conversations = conversationRepository.findByUserAndCursorAndCount(user, cursorId, cursorLastChatDate, count);
+			conversations = conversationRepository.findByUserAndCursorAndCount(user, cursorId, cursorLastChatDate, pageRequest);
 		}
 
 		return conversations.stream()
@@ -43,16 +46,17 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
 
 	@Override
 	public List<ChatResDTO.ConversationListDTO> searchConversationList(Long userId, String keyword, Long cursorId,
-		LocalDateTime cursorLastChatDate, Long count) {
+		LocalDateTime cursorLastChatDate, int count) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
-		List<Conversation> conversations;
+		Pageable pageRequest = PageRequest.of(0, count);
 
+		List<Conversation> conversations;
 		if (cursorId == null || cursorLastChatDate == null) {
-			conversations = conversationRepository.searchKeywordFirstPage(user, keyword, count);
+			conversations = conversationRepository.searchKeywordFirstPage(user, keyword, pageRequest);
 		} else {
-			conversations = conversationRepository.searchKeywordByUserAndCursorAndCount(user, keyword, cursorId, cursorLastChatDate, count);
+			conversations = conversationRepository.searchKeywordByUserAndCursorAndCount(user, keyword, cursorId, cursorLastChatDate, pageRequest);
 		}
 
 		return conversations.stream()
