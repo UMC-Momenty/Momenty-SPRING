@@ -25,17 +25,17 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", length = 20, nullable = false)
+    @Column(name = "username", length = 20)
     private String username;
 
     @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "birth", nullable = false)
+    @Column(name = "birth")
     private LocalDate birth;
 
     @Column(name = "quest_time")
