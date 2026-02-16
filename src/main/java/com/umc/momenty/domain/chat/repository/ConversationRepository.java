@@ -6,6 +6,7 @@ import java.util.List;
 import com.umc.momenty.domain.chat.entity.Conversation;
 import com.umc.momenty.domain.user.entity.User;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,18 +20,16 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     	(c.updatedAt < :cursorLastChatDate
     	OR (c.updatedAt = :cursorLastChatDate AND c.id < :cursorId))
     ORDER BY c.updatedAt DESC, c.id DESC
-    LIMIT :count
 """)
-	List<Conversation> findByUserAndCursorAndCount(User user, Long cursorId, LocalDateTime cursorLastChatDate, Long count);
+	List<Conversation> findByUserAndCursorAndCount(User user, Long cursorId, LocalDateTime cursorLastChatDate, Pageable pageable);
 
 	@Query("""
     SELECT c
     FROM Conversation c
     WHERE c.user = :user
     ORDER BY c.updatedAt DESC, c.id DESC
-    LIMIT :count
 """)
-	List<Conversation> findFirstPage(User user, Long count);
+	List<Conversation> findFirstPage(User user, Pageable pageable);
 
 	@Query("""
     SELECT DISTINCT c
@@ -39,9 +38,8 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     WHERE c.user = :user
     AND ch.content LIKE CONCAT('%', :keyword, '%')
     ORDER BY c.updatedAt DESC, c.id DESC
-    LIMIT :count
 """)
-	List<Conversation> searchKeywordFirstPage(User user, String keyword, Long count);
+	List<Conversation> searchKeywordFirstPage(User user, String keyword, Pageable pageable);
 
 	@Query("""
     SELECT DISTINCT c
@@ -58,7 +56,6 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             )
         )
     ORDER BY c.updatedAt DESC, c.id DESC
-    LIMIT :count
 """)
-	List<Conversation> searchKeywordByUserAndCursorAndCount(User user, String keyword, Long cursorId, LocalDateTime cursorLastChatDate, Long count);
+	List<Conversation> searchKeywordByUserAndCursorAndCount(User user, String keyword, Long cursorId, LocalDateTime cursorLastChatDate, Pageable pageable);
 }
