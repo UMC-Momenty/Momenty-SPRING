@@ -5,6 +5,7 @@ import com.umc.momenty.global.infra.s3.enums.ImageContentType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 import java.util.List;
@@ -15,9 +16,6 @@ public class MomentReqDTO {
     public record MomentDTO(
             @NotEmpty(message = "최소 하나 이상의 사진이 필요합니다.")
             List<MomentImageDTO> images,
-
-            @NotNull(message = "petId는 필수입니다.")
-            Long petId,
 
             @NotNull(message = "감정은 필수입니다.")
             Emotion emotion,
@@ -34,6 +32,7 @@ public class MomentReqDTO {
     ){}
 
     public record MomentImageCreateDTO(
+            @Size(min = 1, max = 10, message = "이미지는 1~10장만 업로드할 수 있습니다.")
             List<ImageContentType> imageTypes
     ){}
 }

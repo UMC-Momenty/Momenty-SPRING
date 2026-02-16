@@ -71,7 +71,7 @@ public class MomentController implements MomentControllerDocs{
     ){
         return ApiResponse.onSuccess(
                 MomentSuccessCode.MOMENT_DETAIL_FOUND,
-                momentQueryService.getMoment(momentId)
+                momentQueryService.getMoment(userId, petId, momentId)
         );
     }
 }
