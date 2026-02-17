@@ -16,6 +16,12 @@
 
 <br/>
 
+## ☁️ 인프라 구조
+
+<img width="550" height="431" alt="image" src="https://github.com/user-attachments/assets/7776340e-f866-4bff-ac1a-69a4d861db52" />
+<br/>
+
+
 ## 👥 팀 협업 방식 
 Momenty 프로젝트는 **Git Flow 기반 협업 방식**을 사용하며,  `develop` 브랜치를 중심으로 안정적인 개발과 배포를 지향합니다.
 <br/>

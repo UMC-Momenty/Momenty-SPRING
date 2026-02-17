@@ -8,6 +8,8 @@ import com.umc.momenty.domain.user.entity.User;
 import com.umc.momenty.global.converter.PageConverter;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public class InquiryConverter {
 
     public static InquiryResDTO.InquiryDTO toInquiryDTO(Inquiry inquiry) {
@@ -33,20 +35,16 @@ public class InquiryConverter {
                 .build();
     }
 
-    public static Inquiry toInquiry(User user, InquiryReqDTO.InquiryDTO inquiryDTO){
+    public static Inquiry toInquiry(User user, InquiryReqDTO.InquiryDTO inquiryDTO, List<String> imageUrls){
         Inquiry inquiry = Inquiry.builder()
                 .type(inquiryDTO.type())
                 .content(inquiryDTO.content())
                 .user(user)
                 .build();
 
-        if(inquiryDTO.images() != null){
-            inquiryDTO.images().forEach(imageDTO ->
-                    inquiry.addImage(
-                            InquiryImage.builder()
-                                    .imageUrl(imageDTO.imageUrl())
-                                    .build()
-                    )
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            imageUrls.forEach(url ->
+                    inquiry.addImage(new InquiryImage(url))
             );
         }
 

@@ -8,10 +8,9 @@ import com.umc.momenty.domain.schedule.converter.ScheduleConverter;
 import com.umc.momenty.domain.schedule.dto.req.ScheduleReqDTO;
 import com.umc.momenty.domain.schedule.dto.res.ScheduleResDTO;
 import com.umc.momenty.domain.schedule.entity.Schedule;
-import com.umc.momenty.domain.schedule.entity.alarm.Alarm;
-import com.umc.momenty.domain.schedule.enums.AlarmType;
-import com.umc.momenty.domain.schedule.repository.AlarmRepository;
 import com.umc.momenty.domain.schedule.repository.ScheduleRepository;
+import com.umc.momenty.domain.schedule.exception.ScheduleException;
+import com.umc.momenty.domain.schedule.exception.code.ScheduleErrorCode;
 import com.umc.momenty.domain.user.entity.User;
 import com.umc.momenty.domain.user.repository.UserRepository;
 import com.umc.momenty.domain.user.exception.UserException;
@@ -26,7 +25,6 @@ import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,10 +35,8 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final PetRepository petRepository;
     private final UserRepository userRepository;
-    private final AlarmRepository alarmRepository;
 
     public ScheduleResDTO.MyPetsResponseDTO getMyPets(Long userId) {
-        // [수정] RuntimeException -> UserException 사용
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
@@ -49,7 +45,6 @@ public class ScheduleService {
     }
 
     public ScheduleResDTO.CalendarResponseDTO getCalendarAll(Long userId, int year, int month) {
-        // [수정] RuntimeException -> UserException 사용
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
@@ -61,14 +56,11 @@ public class ScheduleService {
     }
 
     public ScheduleResDTO.CalendarResponseDTO getCalendarByPet(Long userId, Long petId, int year, int month) {
-        // [수정] RuntimeException -> UserException 사용
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
-        // [추가] 펫 존재 여부 확인 후 PetException 발생
-        if (!petRepository.existsById(petId)) {
-            throw new PetException(PetErrorCode.PET_NOT_FOUND);
-        }
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new PetException(PetErrorCode.PET_NOT_FOUND));
 
         LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
         LocalDateTime endOfMonth = YearMonth.of(year, month).atEndOfMonth().atTime(23, 59, 59);
@@ -76,9 +68,8 @@ public class ScheduleService {
         List<Schedule> schedules = scheduleRepository.findAllByPetAndMonth(petId, user, startOfMonth, endOfMonth);
         return ScheduleConverter.toCalendarResponseDTO(petId, year, month, schedules);
     }
-    // 4. 일별 일정 조회
+
     public ScheduleResDTO.DailyScheduleResponseDTO getDailyScheduleByPet(Long petId, LocalDate date) {
-        // [수정] 검증 로직 통일 (existsById -> findById.orElseThrow)
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetException(PetErrorCode.PET_NOT_FOUND));
 
@@ -87,72 +78,102 @@ public class ScheduleService {
 
         List<Schedule> schedules = scheduleRepository.findAllByPetAndDate(petId, startOfDay, endOfDay);
 
-        // [수정] N+1 문제 해결 로직
-        // 1. 스케줄 리스트가 비어있으면 바로 리턴
         if (schedules.isEmpty()) {
             return ScheduleConverter.toDailyScheduleResponseDTO(petId, date, Collections.emptyList());
         }
 
-        // 2. 조회된 스케줄들의 ID를 이용해 알람들을 한 번에 조회 (IN 쿼리)
-        List<Alarm> alarms = alarmRepository.findAllByScheduleIn(schedules);
-
-        // 3. 알람을 Map으로 변환 (Key: Schedule, Value: Memo) -> 조회 속도 O(1)
-        Map<Schedule, String> alarmMemoMap = alarms.stream()
-                .collect(Collectors.toMap(
-                        Alarm::getSchedule,
-                        Alarm::getMemo,
-                        (existing, replacement) -> existing // 중복 키 발생 시 기존 값 유지
-                ));
-
-        // 4. DTO 변환 (Map에서 메모 가져오기)
         List<ScheduleResDTO.DailyScheduleDTO> dtos = schedules.stream()
-                .map(schedule -> {
-                    String memo = alarmMemoMap.get(schedule); // DB 조회 없이 Map에서 획득
-                    return ScheduleConverter.toDailyScheduleDTO(schedule, memo);
-                })
+                .map(schedule -> ScheduleConverter.toDailyScheduleDTO(schedule, schedule.getMemo()))
                 .collect(Collectors.toList());
 
         return ScheduleConverter.toDailyScheduleResponseDTO(petId, date, dtos);
     }
 
-    // 5. 일정 생성
     @Transactional
     public ScheduleResDTO.ScheduleIdResponseDTO registerSchedule(Long petId, ScheduleReqDTO.ScheduleCreateDTO request) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new PetException(PetErrorCode.PET_NOT_FOUND));
 
-        // 날짜/시간 병합 로직
-        LocalDate datePart;
-        if ("REPEAT".equals(request.getType()) || request.getDate() == null) {
-            datePart = LocalDate.now(); // 반복일 경우 시작일은 오늘로 임시 설정 (요구사항에 따라 변경 가능)
-        } else {
+        LocalDate datePart = LocalDate.now();
+        if ("ONE_TIME".equals(request.getType()) && request.getDate() != null) {
             datePart = LocalDate.parse(request.getDate());
         }
-        LocalTime timePart = LocalTime.parse(request.getTime()); // "14:00" -> LocalTime
+
+        LocalTime timePart = LocalTime.parse(request.getTime());
         LocalDateTime startDateTime = LocalDateTime.of(datePart, timePart);
 
-        // 1. Schedule 저장
+        // [핵심] List -> String 변환 (예: ["MON", "WED"] -> "MON,WED")
+        String repeatDaysStr = null;
+        if ("REPEAT".equals(request.getType()) && request.getRepeatDays() != null) {
+            repeatDaysStr = String.join(",", request.getRepeatDays());
+        }
+
         Schedule schedule = Schedule.builder()
-                .content(request.getTitle())
-                .startDateTime(startDateTime)
+                .title(request.getTitle())
                 .category(request.getCategory())
+                .memo(request.getMemo())
+                .startDateTime(startDateTime)
+                .alarmTime(timePart)
+                .repeatDays(repeatDaysStr)
+                .isAlarmEnabled(request.getIsAlarmEnabled() != null ? request.getIsAlarmEnabled() : true)
+                .durationMinutes(request.getDurationMinutes())
                 .user(pet.getUser())
                 .pet(pet)
                 .build();
-        scheduleRepository.save(schedule);
 
-        // 2. Alarm 저장 (메모 저장을 위해 필수)
-        Alarm alarm = Alarm.builder()
-                .schedule(schedule)
-                .title(request.getTitle())
-                .memo(request.getMemo())
-                .alarmType("REPEAT".equals(request.getType()) ? AlarmType.REPEAT : AlarmType.ONE_TIME)
-                .isEnabled(true)
-                .build();
-        alarmRepository.save(alarm);
+        scheduleRepository.save(schedule);
 
         return ScheduleResDTO.ScheduleIdResponseDTO.builder()
                 .scheduleId(schedule.getId())
+                .build();
+    }
+
+    // [NEW] 6. 알림 목록 조회
+    public ScheduleResDTO.AlarmListDTO getAlarmList(Long petId) {
+        if (!petRepository.existsById(petId)) {
+            throw new PetException(PetErrorCode.PET_NOT_FOUND);
+        }
+
+        List<Schedule> schedules = scheduleRepository.findAllAlarmsByPet(petId);
+
+        List<ScheduleResDTO.AlarmDTO> alarmDTOs = schedules.stream()
+                .map(s -> {
+                    List<String> daysList = null;
+                    if (s.getRepeatDays() != null && !s.getRepeatDays().isEmpty()) {
+                        daysList = List.of(s.getRepeatDays().split(","));
+                    }
+
+                    return ScheduleResDTO.AlarmDTO.builder()
+                            .scheduleId(s.getId())
+                            .title(s.getTitle())
+                            .category(s.getCategory())
+                            .repeatDays(daysList)
+                            .date(s.getStartDateTime().toLocalDate())
+                            .alarmTime(s.getAlarmTime())
+                            .isOneTime(s.getRepeatDays() == null)
+                            .isAlarmEnabled(s.isAlarmEnabled())
+                            .durationMinutes(s.getDurationMinutes())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return ScheduleResDTO.AlarmListDTO.builder()
+                .petId(petId)
+                .alarms(alarmDTOs)
+                .build();
+    }
+
+    // [NEW] 7. 알림 상태 토글
+    @Transactional
+    public ScheduleResDTO.AlarmStatusResponseDTO toggleAlarmStatus(Long scheduleId, boolean isEnabled) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+
+        schedule.updateAlarmStatus(isEnabled);
+
+        return ScheduleResDTO.AlarmStatusResponseDTO.builder()
+                .scheduleId(schedule.getId())
+                .isAlarmEnabled(schedule.isAlarmEnabled())
                 .build();
     }
 }

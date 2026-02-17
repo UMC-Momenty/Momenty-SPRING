@@ -50,6 +50,7 @@ public class ScheduleConverter {
                 .days(days)
                 .build();
     }
+
     public static ScheduleResDTO.DailyScheduleResponseDTO toDailyScheduleResponseDTO(Long petId, LocalDate date, List<ScheduleResDTO.DailyScheduleDTO> scheduleDTOs) {
         return ScheduleResDTO.DailyScheduleResponseDTO.builder()
                 .petId(petId)
@@ -58,11 +59,11 @@ public class ScheduleConverter {
                 .build();
     }
 
-    // 단일 스케줄 -> DTO 변환 (memo는 별도로 받음)
+    // 단일 스케줄 -> DTO 변환
     public static ScheduleResDTO.DailyScheduleDTO toDailyScheduleDTO(Schedule schedule, String memo) {
         return ScheduleResDTO.DailyScheduleDTO.builder()
                 .scheduleId(schedule.getId())
-                .title(schedule.getContent()) // content -> title 매핑
+                .title(schedule.getTitle()) // ✅ content -> title로 수정
                 .startAt(schedule.getStartDateTime())
                 .category(schedule.getCategory())
                 .memo(memo)

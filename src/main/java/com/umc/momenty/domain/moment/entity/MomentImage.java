@@ -21,4 +21,10 @@ public class MomentImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moment_id", nullable = false)
     private Moment moment;
+
+    public MomentImage(String imageUrl) {this.imageUrl = imageUrl;}
+
+    public void assignMoment(Moment moment){
+        this.moment = moment;
+    }
 }
