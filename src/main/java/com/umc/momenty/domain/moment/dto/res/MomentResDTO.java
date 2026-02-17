@@ -38,4 +38,9 @@ public class MomentResDTO {
             PageResDTO.PageInfoDTO pageInfo
     ) {}
 
+    @Builder
+    public record MomentCountDTO(
+            Long count
+    ) {}
+
 }

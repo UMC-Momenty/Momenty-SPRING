@@ -70,4 +70,10 @@ public class MomentConverter {
                 .pageInfo(PageConverter.toPageInfoDTO(page))
                 .build();
     }
+
+	public static MomentResDTO.MomentCountDTO toMomentCountDTO(long count) {
+        return MomentResDTO.MomentCountDTO.builder()
+            .count(count)
+            .build();
+	}
 }

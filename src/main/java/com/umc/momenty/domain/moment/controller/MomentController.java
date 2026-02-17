@@ -6,6 +6,7 @@ import com.umc.momenty.domain.moment.exception.code.MomentSuccessCode;
 import com.umc.momenty.domain.moment.service.command.MomentCommandService;
 import com.umc.momenty.domain.moment.service.command.MomentImageCommandService;
 import com.umc.momenty.domain.moment.service.query.MomentQueryService;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import com.umc.momenty.global.infra.s3.dto.response.PresignedUrlResponse;
 import jakarta.validation.Valid;
@@ -72,6 +73,18 @@ public class MomentController implements MomentControllerDocs{
         return ApiResponse.onSuccess(
                 MomentSuccessCode.MOMENT_DETAIL_FOUND,
                 momentQueryService.getMoment(userId, petId, momentId)
+        );
+    }
+
+    @Override
+    @GetMapping("/pets/{petId}/count")
+    public ApiResponse<MomentResDTO.MomentCountDTO> getMomentCount(
+        @AuthUser Long userId,
+        @PathVariable Long petId
+    ){
+        return ApiResponse.onSuccess(
+            MomentSuccessCode.MOMENT_DETAIL_FOUND,
+            momentQueryService.getMomentCount(userId, petId)
         );
     }
 }
