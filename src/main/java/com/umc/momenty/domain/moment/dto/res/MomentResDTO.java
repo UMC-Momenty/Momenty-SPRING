@@ -29,7 +29,8 @@ public class MomentResDTO {
             Long momentId,
             Emotion emotion,
             LocalDateTime createdAt,
-            String content
+            String content,
+            String thumbnail
     ) {}
 
     @Builder
