@@ -26,6 +26,7 @@ public class PetCommandServiceImpl implements PetCommandService {
     private final PetRepository petRepository;
     private final PetValidator petValidator;
 
+    @Override
     public void createPetProfile(Long userId, PetReqDTO.PetProfileDTO petProfileDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
@@ -38,6 +39,7 @@ public class PetCommandServiceImpl implements PetCommandService {
         petRepository.save(pet);
     }
 
+    @Override
     public void updatePetProfile(Long userId, Long petId, PetReqDTO.PetUpdateDTO petUpdateDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));

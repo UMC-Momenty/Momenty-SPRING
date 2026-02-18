@@ -1,10 +1,13 @@
 package com.umc.momenty.domain.pet.controller;
 
 import com.umc.momenty.domain.pet.dto.req.PetReqDTO;
+import com.umc.momenty.domain.pet.dto.res.PetResDTO;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.web.bind.annotation.PathVariable;
 
 public interface PetControllerDocs {
 
@@ -63,4 +66,15 @@ public interface PetControllerDocs {
             )
             PetReqDTO.PetUpdateDTO petUpdateDTO
     );
+
+    @Operation(
+            summary = "특정 반려동물 프로필 조회 API",
+            description = "해당 사용자의 특정 반려동물 프로필을 조회합니다."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "존재하지 않는 반려동물")
+    })
+    ApiResponse<PetResDTO.PetDTO> getPet(@Parameter(hidden = true) Long userId, @Parameter(description = "조회할 반려동물 ID") Long petId);
 }
