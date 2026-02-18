@@ -25,6 +25,10 @@ public class Comment extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "is_anonymous", nullable = false)
+    @Builder.Default
+    private boolean isAnonymous = false;
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 

@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,6 +32,10 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PostCategory category;
 
+    @Column(name = "is_anonymous", nullable = false)
+    @Builder.Default
+    private boolean isAnonymous = false;
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
@@ -44,4 +50,38 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<PostImage> postImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Comment> comments = new ArrayList<>();
+
+    // 추가: 댓글 수 증가 메서드
+    public void increaseCommentNum() {
+        this.commentNum++;
+    }
+
+    // 추가: 댓글 수 감소 메서드 (삭제 시 사용)
+    public void decreaseCommentNum() {
+        if (this.commentNum > 0) {
+            this.commentNum--;
+        }
+    }
+
+    // 🔥 추가: soft delete 메서드
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void addPostImage(PostImage postImage) {
+        postImages.add(postImage);
+        postImage.assignPost(this);
+    }
 }
