@@ -5,6 +5,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface InquiryQueryService {
 
-    InquiryResDTO.InquiryDTO getInquiry(Long inquiryId);
+    InquiryResDTO.InquiryDTO getInquiry(Long userId, Long inquiryId);
     InquiryResDTO.InquiryPageDTO getAllInquiry(Long userId, Pageable pageable);
 }
