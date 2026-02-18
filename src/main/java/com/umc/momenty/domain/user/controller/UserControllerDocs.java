@@ -28,7 +28,7 @@ public interface UserControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "존재하지 않는 사용자")
     })
     ApiResponse<TokenDto> updateProfile(
-            @Parameter(description = "수정할 사용자 ID")
+            @Parameter(hidden = true)
             Long userId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "프로필 수정 내용 (PATCH 방식)\n\n"
