@@ -69,6 +69,7 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public PostResDto.PostPageDTO getAllPosts(Long userId, PostCategory category, String keyword, Pageable pageable) {
         getUserById(userId);
+        // 🔥 수정: soft delete된 글 제외 (Repository에서 처리됨)
         Page<Post> posts = postRepository.findAllByCategoryAndKeyword(category, keyword, pageable);
         List<Long> postIds = posts.getContent().stream().map(Post::getId).toList();
         List<Long> likedPostIds = likeRepository.findLikedPostIdsByUserIdAndPostIds(userId, postIds);
@@ -79,9 +80,17 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public Long createComment(Long userId, Long postId, CommentReqDTO.CreateCommentDTO createComment) {
         User user = getUserById(userId);
-        Post post = getPostById(postId);
+        // 🔥 수정: soft delete된 글만 체크
+        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
+                .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
+
         Comment comment = CommentConverter.toComment(user, post, createComment);
         Comment savedComment = commentRepository.save(comment);
+
+        // 🔥 핵심 수정: 댓글 생성 시 Post의 commentNum 증가!
+        post.increaseCommentNum();
+        postRepository.save(post);  // 변경사항 플러시
+
         return savedComment.getId();
     }
 
@@ -89,8 +98,13 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public PostResDto.PostDetailDTO getPostDetail(Long userId, Long postId) {
         getUserById(userId);
-        Post post = getPostById(postId);
-        List<Comment> comments = post.getComments();
+        // 수정: soft delete된 글 제외
+        Post post = postRepository.findByIdAndDeletedAtIsNull(postId)
+                .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
+
+        // 수정: soft delete된 댓글 제외
+        List<Comment> comments = commentRepository.findByPostIdAndDeletedAtIsNull(postId);
+
         boolean isLiked = likeRepository.findLikedPostIdsByUserIdAndPostIds(userId, List.of(postId)).contains(postId);
         return PostConverter.toPostDetailDTO(post, comments, isLiked);
     }
@@ -100,8 +114,9 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new PostException(UserErrorCode.USER_NOT_FOUND));
     }
 
+    // 수정: 기존 메서드도 soft delete 조건으로 변경
     private Post getPostById(Long postId) {
-        return postRepository.findById(postId)
+        return postRepository.findByIdAndDeletedAtIsNull(postId)
                 .orElseThrow(() -> new PostException(PostErrorCode.POST_NOT_FOUND));
     }
 

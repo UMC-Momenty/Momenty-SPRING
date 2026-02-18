@@ -63,6 +63,23 @@ public class Post extends BaseEntity {
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
+    // 추가: 댓글 수 증가 메서드
+    public void increaseCommentNum() {
+        this.commentNum++;
+    }
+
+    // 추가: 댓글 수 감소 메서드 (삭제 시 사용)
+    public void decreaseCommentNum() {
+        if (this.commentNum > 0) {
+            this.commentNum--;
+        }
+    }
+
+    // 🔥 추가: soft delete 메서드
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
     public void addPostImage(PostImage postImage) {
         postImages.add(postImage);
         postImage.assignPost(this);
