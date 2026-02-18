@@ -41,4 +41,11 @@ public class UserController implements UserControllerDocs {
 
     }
 
+    @GetMapping("/user")
+    @Override
+    public ApiResponse<UserResDTO.UserDTO> getUser(
+            @AuthUser Long userId
+    ){
+        return ApiResponse.onSuccess(UserSuccessCode.USER_DETAIL_FOUND, userQueryService.getUser(userId));
+    }
 }

@@ -22,4 +22,12 @@ public class UserQueryServiceImpl implements UserQueryService {
 
         return UserConverter.toUserProfileDTO(user);
     }
+
+    @Override
+    public UserResDTO.UserDTO getUser(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        return UserConverter.toUserDTO(user);
+    }
 }

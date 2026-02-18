@@ -7,6 +7,5 @@ import java.util.Optional;
 
 public interface UserCommandService {
 
-
     Optional<TokenDto>updateProfile(Long userId, UserReqDTO.UserProfileDTO userReqDTO);
 }
