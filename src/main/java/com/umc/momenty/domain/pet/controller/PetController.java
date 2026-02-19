@@ -7,6 +7,7 @@ import com.umc.momenty.domain.pet.dto.res.PetResDTO;
 import com.umc.momenty.domain.pet.exception.code.PetSuccessCode;
 import com.umc.momenty.domain.pet.service.command.PetCommandService;
 import com.umc.momenty.domain.pet.service.query.PetQueryService;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +42,10 @@ public class PetController implements PetControllerDocs {
         return ApiResponse.onSuccess(PetSuccessCode.PET_UPDATED, null);
     }
 
-    @GetMapping("/users/{userId}/pets/my")
+    @GetMapping("/pets/my")
     @Override
     public ApiResponse<List<PetResDTO.MyPetDTO>> getMyPetList(
-        @PathVariable Long userId
+        @AuthUser Long userId
     ) {
         return ApiResponse.onSuccess(PetSuccessCode.PET_FOUND, petQueryService.getMyPetList(userId));
     }
