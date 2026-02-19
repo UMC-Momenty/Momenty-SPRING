@@ -52,9 +52,9 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
     @Override
-    public ChatResDTO.ChatResponse chat(Long conversationId, String userMessage) {
+    public ChatResDTO.ChatResponse chat(Long userId, Long conversationId, String userMessage) {
 
-        Conversation conversation = conservationRepository.findById(conversationId)
+        Conversation conversation = conservationRepository.findByIdAndUserId(conversationId, userId)
                         .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_NOT_FOUND));
 
         return processChat(conversation, userMessage);

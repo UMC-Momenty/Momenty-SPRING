@@ -28,16 +28,16 @@ public class MomentController implements MomentControllerDocs{
     private final MomentImageCommandService momentImageCommandService;
 
     @Override
-    @PostMapping("users/{userId}/pets/{petId}")
-    public ApiResponse<Void> createMoment(
-            @PathVariable Long userId,
+    @PostMapping("pets/{petId}")
+    public ApiResponse<MomentResDTO.MomentDTO> createMoment(
+            @AuthUser Long userId,
             @PathVariable Long petId,
             @Valid @RequestBody MomentReqDTO.MomentDTO dto
     ){
-        momentCommandService.createMoment(userId, petId, dto);
         return ApiResponse.onSuccess(
                 MomentSuccessCode.MOMENT_CREATED,
-                null);
+                momentCommandService.createMoment(userId, petId, dto)
+        );
     }
 
     @Override
@@ -51,9 +51,9 @@ public class MomentController implements MomentControllerDocs{
     }
 
     @Override
-    @GetMapping("/users/{userId}/pets/{petId}")
+    @GetMapping("/pets/{petId}")
     public ApiResponse<MomentResDTO.MomentPageDTO> getMoments(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @PathVariable Long petId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
@@ -64,9 +64,9 @@ public class MomentController implements MomentControllerDocs{
     }
 
     @Override
-    @GetMapping("/users/{userId}/pets/{petId}/{momentId}")
+    @GetMapping("/pets/{petId}/{momentId}")
     public ApiResponse<MomentResDTO.MomentDTO> getMoment(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @PathVariable Long petId,
             @PathVariable Long momentId
     ){

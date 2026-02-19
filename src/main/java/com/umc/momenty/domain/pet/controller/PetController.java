@@ -21,25 +21,34 @@ public class PetController implements PetControllerDocs {
     private final PetCommandService petCommandService;
     private final PetQueryService petQueryService;
 
-    @PostMapping("/users/{userId}/pets")
+    @PostMapping("/pets")
     @Override
     public ApiResponse<Void> createPetProfile(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @Valid @RequestBody PetReqDTO.PetProfileDTO petProfileDTO
     ){
         petCommandService.createPetProfile(userId, petProfileDTO);
         return ApiResponse.onSuccess(PetSuccessCode.PET_CREATED, null);
     }
 
-    @PatchMapping("/users/{userId}/pets/{petId}")
+    @PatchMapping("/pets/{petId}")
     @Override
     public ApiResponse<Void> updatePetProfile(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @PathVariable Long petId,
             @Valid @RequestBody PetReqDTO.PetUpdateDTO petUpdateDTO
     ) {
         petCommandService.updatePetProfile(userId, petId, petUpdateDTO);
         return ApiResponse.onSuccess(PetSuccessCode.PET_UPDATED, null);
+    }
+
+    @GetMapping("/pets/{petId}")
+    @Override
+    public ApiResponse<PetResDTO.PetDTO> getPet(
+            @AuthUser Long userId,
+            @PathVariable Long petId
+    ){
+        return ApiResponse.onSuccess(PetSuccessCode.PET_DETAIL_FOUND, petQueryService.getPet(userId, petId));
     }
 
     @GetMapping("/pets/my")

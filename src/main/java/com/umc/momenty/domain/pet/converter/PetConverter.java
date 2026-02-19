@@ -21,6 +21,19 @@ public class PetConverter {
                 .build();
     }
 
+    public static PetResDTO.PetDTO toPetDTO(Pet pet){
+        return PetResDTO.PetDTO.builder()
+                .petId(pet.getId())
+                .profileImageUrl(pet.getProfileImageUrl())
+                .petName(pet.getPetName())
+                .gender(pet.getGender())
+                .birth(pet.getBirth())
+                .species(pet.getSpecies())
+                .breedName(pet.getBreed().getName())
+                .intro(pet.getIntro())
+                .build();
+    }
+
     public static PetResDTO.MyPetDTO toMyPetDTO(Pet pet) {
         return PetResDTO.MyPetDTO.builder()
             .petId(pet.getId())
