@@ -31,7 +31,7 @@ public class ChatController implements ChatControllerDocs {
     @PostMapping("/users")
     @Override
     public ApiResponse<ChatResDTO.ChatResponse> firstChat(@AuthUser Long userId, @RequestBody ChatReqDTO.ChatRequest request){
-        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.firstChat(userId, request.message()));
+        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.firstChat(userId, request));
     }
 
     @PostMapping("/conversations/{conversationId}")

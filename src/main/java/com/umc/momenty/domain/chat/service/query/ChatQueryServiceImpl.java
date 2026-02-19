@@ -76,10 +76,10 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         Conversation conversation = conservationRepository.findByIdAndUserId(conversationId, userId)
                         .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_NOT_FOUND));
 
-        return processChat(conversation, userMessage);
+        return processChat(conversation, chatRequest);
     }
 
-    private ChatResDTO.ChatResponse processChat(Conversation conversation, String userMessage) {
+    private ChatResDTO.ChatResponse processChat(Conversation conversation, ChatReqDTO.ChatRequest chatRequest) {
 
         // Chat 엔티티 생성
         Long chatId = chatCommandService.saveUserChat(chatRequest, conversation);
@@ -148,5 +148,19 @@ public class ChatQueryServiceImpl implements ChatQueryService {
             return message + "\n\n 정확한 진단과 치료는 수의사 상담이 필요해요.";
         }
         return message;
+    }
+
+    @Override
+    public List<ChatResDTO.SearchChatDTO> searchChatList(Long userId, Long conversationId, String keyword) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        Conversation conversation = conservationRepository.findById(conversationId)
+            .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_NOT_FOUND));
+
+        List<Chat> chatList = chatRepository.searchByUserAndKeyword(user, conversation, keyword);
+        return chatList.stream()
+            .map(ChatConverter::toSearchChatDTO)
+            .toList();
     }
 }
