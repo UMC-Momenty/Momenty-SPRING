@@ -21,4 +21,12 @@ public class DailyResDTO {
 			String quest,
 			String answer
 	){}
+
+	@Builder
+	public record AnswerStatusDTO(
+			Long questId,
+			Long answerId,
+			LocalDate date,
+			Boolean status
+	){}
 }

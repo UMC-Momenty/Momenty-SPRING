@@ -34,4 +34,22 @@ public class DailyConverter {
 			.date(dailyAnswer.getCreatedAt().toLocalDate())
 			.build();
 	}
+
+	public static DailyResDTO.AnswerStatusDTO toEmptyAnswerStatusDTO(DailyQuestion dailyQuestion) {
+		return DailyResDTO.AnswerStatusDTO.builder()
+			.questId(dailyQuestion.getId())
+			.answerId(null)
+			.date(dailyQuestion.getCreatedAt().toLocalDate())
+			.status(false)
+			.build();
+	}
+
+	public static DailyResDTO.AnswerStatusDTO toAnswerStatusDTO(DailyQuestion dailyQuestion, DailyAnswer dailyAnswer) {
+		return DailyResDTO.AnswerStatusDTO.builder()
+			.questId(dailyQuestion.getId())
+			.answerId(dailyAnswer.getId())
+			.date(dailyQuestion.getCreatedAt().toLocalDate())
+			.status(true)
+			.build();
+	}
 }

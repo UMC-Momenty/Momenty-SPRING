@@ -2,6 +2,7 @@ package com.umc.momenty.domain.moment.controller;
 
 import com.umc.momenty.domain.moment.dto.req.MomentReqDTO;
 import com.umc.momenty.domain.moment.dto.res.MomentResDTO;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import com.umc.momenty.global.infra.s3.dto.response.PresignedUrlResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -85,5 +86,18 @@ public interface MomentControllerDocs {
             @Parameter(description = "사용자 ID", required = true) Long userId,
             @Parameter(description = "반려동물 ID", required = true) Long petId,
             @Parameter(description = "모먼트 ID", required = true) Long momentId
+    );
+
+    @Operation(
+            summary = "모먼트 개수 조회 API",
+            description = "특정 사용자(userId)의 특정 반려동물(petId)에 속한 모먼트 개수를 조회합니다."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "실패")
+    })
+    ApiResponse<MomentResDTO.MomentCountDTO> getMomentCount(
+            @AuthUser Long userId,
+            @Parameter(description = "반려동물 ID", required = true) Long petId
     );
 }

@@ -28,4 +28,13 @@ public class PetResDTO {
 
             String intro
     ){}
+
+    @Builder
+    public record MyPetDTO(
+            Long petId,
+            String petName,
+            Species species,
+            String breedName,
+            String profileImageUrl
+    ){}
 }

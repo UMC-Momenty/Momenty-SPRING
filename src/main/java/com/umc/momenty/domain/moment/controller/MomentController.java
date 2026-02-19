@@ -75,5 +75,17 @@ public class MomentController implements MomentControllerDocs{
                 momentQueryService.getMoment(userId, petId, momentId)
         );
     }
+
+    @Override
+    @GetMapping("/pets/{petId}/count")
+    public ApiResponse<MomentResDTO.MomentCountDTO> getMomentCount(
+        @AuthUser Long userId,
+        @PathVariable Long petId
+    ){
+        return ApiResponse.onSuccess(
+            MomentSuccessCode.MOMENT_DETAIL_FOUND,
+            momentQueryService.getMomentCount(userId, petId)
+        );
+    }
 }
 

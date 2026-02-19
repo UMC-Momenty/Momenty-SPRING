@@ -32,4 +32,11 @@ public class MomentQueryServiceImpl implements MomentQueryService{
                 .orElseThrow(() -> new MomentException(MomentErrorCode.MOMENT_NOT_FOUND));
         return MomentConverter.toMomentDTO(moment);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MomentResDTO.MomentCountDTO getMomentCount(Long userId, Long petId) {
+        long count = momentRepository.countByUserIdAndPetId(userId, petId);
+        return MomentConverter.toMomentCountDTO(count);
+    }
 }

@@ -1,5 +1,7 @@
 package com.umc.momenty.domain.pet.controller;
 
+import java.util.List;
+
 import com.umc.momenty.domain.pet.dto.req.PetReqDTO;
 import com.umc.momenty.domain.pet.dto.res.PetResDTO;
 import com.umc.momenty.domain.pet.exception.code.PetSuccessCode;
@@ -47,5 +49,13 @@ public class PetController implements PetControllerDocs {
             @PathVariable Long petId
     ){
         return ApiResponse.onSuccess(PetSuccessCode.PET_DETAIL_FOUND, petQueryService.getPet(userId, petId));
+    }
+
+    @GetMapping("/pets/my")
+    @Override
+    public ApiResponse<List<PetResDTO.MyPetDTO>> getMyPetList(
+        @AuthUser Long userId
+    ) {
+        return ApiResponse.onSuccess(PetSuccessCode.PET_FOUND, petQueryService.getMyPetList(userId));
     }
 }

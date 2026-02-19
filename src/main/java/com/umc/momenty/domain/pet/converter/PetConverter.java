@@ -33,4 +33,14 @@ public class PetConverter {
                 .intro(pet.getIntro())
                 .build();
     }
+
+    public static PetResDTO.MyPetDTO toMyPetDTO(Pet pet) {
+        return PetResDTO.MyPetDTO.builder()
+            .petId(pet.getId())
+            .petName(pet.getPetName())
+            .species(pet.getBreed().getSpecies())
+            .breedName(pet.getBreed().getName())
+            .profileImageUrl(pet.getProfileImageUrl())
+            .build();
+    }
 }
