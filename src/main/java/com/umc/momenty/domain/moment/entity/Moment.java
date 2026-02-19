@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,4 +40,13 @@ public class Moment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id", nullable = false)
     private Pet pet;
+
+    @OneToMany(mappedBy = "moment", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<MomentImage> images = new ArrayList<>();
+
+    public void addImage(MomentImage image){
+        images.add(image);
+        image.assignMoment(this);
+    }
 }

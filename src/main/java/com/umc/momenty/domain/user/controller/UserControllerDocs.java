@@ -3,6 +3,7 @@ package com.umc.momenty.domain.user.controller;
 import com.umc.momenty.domain.user.dto.req.UserReqDTO;
 import com.umc.momenty.domain.user.dto.res.UserResDTO;
 import com.umc.momenty.global.apiPayload.ApiResponse;
+import com.umc.momenty.global.oauth.dto.TokenDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,7 +27,7 @@ public interface UserControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "존재하지 않는 사용자")
     })
-    ApiResponse<Void> updateProfile(
+    ApiResponse<TokenDto> updateProfile(
             @Parameter(description = "수정할 사용자 ID")
             Long userId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -35,6 +36,9 @@ public interface UserControllerDocs {
                             + "- 전달되지 않은 필드는 기존 값을 유지합니다.\n"
                             + "- profileUrl이 빈 문자열(\"\")일 경우 null로 초기화됩니다.\n"
                             + "- resetQuestTime : true 일 경우 questTime은 null로 초기화됩니다.\n\n"
+                            + "**응답 규칙:**\n"
+                            + "- 권한(ROLE)이 변경되는 경우에만 TokenDto(accessToken/refreshToken)가 반환됩니다.\n"
+                            + "- 권한 변경이 없으면 result는 null 입니다.\n\n"
                             + "**요청 예시:**\n"
                             + "- \"username\": \"example\",\n"
                             + "- \"gender\": \"FEMALE\",\n"
