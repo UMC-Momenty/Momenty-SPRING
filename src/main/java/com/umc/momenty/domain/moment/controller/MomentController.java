@@ -28,16 +28,16 @@ public class MomentController implements MomentControllerDocs{
     private final MomentImageCommandService momentImageCommandService;
 
     @Override
-    @PostMapping("users/{userId}/pets/{petId}")
-    public ApiResponse<Void> createMoment(
+    @PostMapping("pets/{petId}")
+    public ApiResponse<MomentResDTO.MomentDTO> createMoment(
             @AuthUser Long userId,
             @PathVariable Long petId,
             @Valid @RequestBody MomentReqDTO.MomentDTO dto
     ){
-        momentCommandService.createMoment(userId, petId, dto);
         return ApiResponse.onSuccess(
                 MomentSuccessCode.MOMENT_CREATED,
-                null);
+                momentCommandService.createMoment(userId, petId, dto)
+        );
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MomentController implements MomentControllerDocs{
     }
 
     @Override
-    @GetMapping("/users/{userId}/pets/{petId}")
+    @GetMapping("/pets/{petId}")
     public ApiResponse<MomentResDTO.MomentPageDTO> getMoments(
             @AuthUser Long userId,
             @PathVariable Long petId,
@@ -64,7 +64,7 @@ public class MomentController implements MomentControllerDocs{
     }
 
     @Override
-    @GetMapping("/users/{userId}/pets/{petId}/{momentId}")
+    @GetMapping("/pets/{petId}/{momentId}")
     public ApiResponse<MomentResDTO.MomentDTO> getMoment(
             @AuthUser Long userId,
             @PathVariable Long petId,
