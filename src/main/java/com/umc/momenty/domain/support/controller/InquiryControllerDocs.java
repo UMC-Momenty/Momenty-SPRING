@@ -6,6 +6,8 @@ import com.umc.momenty.global.apiPayload.ApiResponse;
 import com.umc.momenty.global.infra.s3.dto.response.PresignedUrlResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +19,15 @@ public interface InquiryControllerDocs {
 
     @Operation(summary = "문의내역 상세 조회 API", description = "문의내역 ID를 기반으로 문의내역 상세 정보를 조회합니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "성공",
+                    content = @Content(
+                            schema = @Schema(
+                                    implementation = InquiryResDTO.InquiryDTO.class
+                            )
+                    )
+            ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "존재하지 않는 문의내역")
     })
     ApiResponse<InquiryResDTO.InquiryDTO> getInquiry(@Parameter(hidden = true) Long userId, Long inquiryId);
