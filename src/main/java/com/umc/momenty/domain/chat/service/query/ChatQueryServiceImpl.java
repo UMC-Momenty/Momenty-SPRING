@@ -71,29 +71,15 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
     @Override
-    public ChatResDTO.ChatResponse chat(Long conversationId, ChatReqDTO.ChatRequest chatRequest) {
+    public ChatResDTO.ChatResponse chat(Long userId, Long conversationId, ChatReqDTO.ChatRequest chatRequest) {
 
-        Conversation conversation = conservationRepository.findById(conversationId)
+        Conversation conversation = conservationRepository.findByIdAndUserId(conversationId, userId)
                         .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_NOT_FOUND));
 
-        return processChat(conversation, chatRequest);
+        return processChat(conversation, userMessage);
     }
 
-    @Override
-    public List<ChatResDTO.SearchChatDTO> searchChatList(Long userId, Long conversationId, String keyword) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
-
-        Conversation conversation = conservationRepository.findById(conversationId)
-            .orElseThrow(() -> new ChatException(ChatErrorCode.CONVERSATION_NOT_FOUND));
-
-        List<Chat> chatList = chatRepository.searchByUserAndKeyword(user, conversation, keyword);
-        return chatList.stream()
-            .map(ChatConverter::toSearchChatDTO)
-            .toList();
-    }
-
-    private ChatResDTO.ChatResponse processChat(Conversation conversation, ChatReqDTO.ChatRequest chatRequest) {
+    private ChatResDTO.ChatResponse processChat(Conversation conversation, String userMessage) {
 
         // Chat 엔티티 생성
         Long chatId = chatCommandService.saveUserChat(chatRequest, conversation);

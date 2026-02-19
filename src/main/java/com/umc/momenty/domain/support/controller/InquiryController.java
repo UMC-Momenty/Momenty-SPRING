@@ -7,6 +7,7 @@ import com.umc.momenty.domain.support.exception.code.InquirySuccessCode;
 import com.umc.momenty.domain.support.service.command.InquiryCommandService;
 import com.umc.momenty.domain.support.service.command.InquiryImageCommandService;
 import com.umc.momenty.domain.support.service.query.InquiryQueryService;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import com.umc.momenty.global.infra.s3.dto.response.PresignedUrlResponse;
 import jakarta.validation.Valid;
@@ -30,26 +31,26 @@ public class InquiryController implements InquiryControllerDocs{
     @GetMapping("/{inquiryId}")
     @Override
     public ApiResponse<InquiryResDTO.InquiryDTO> getInquiry(
+            @AuthUser Long userId,
             @PathVariable Long inquiryId
     ){
-        // TODO : JWT 도입 시 로그인한 사용자와 inquiry.user 비교해서 접근 권한 검증 필요
-        return ApiResponse.onSuccess(InquirySuccessCode.INQUIRY_DETAIL_FOUND, inquiryQueryService.getInquiry(inquiryId));
+        return ApiResponse.onSuccess(InquirySuccessCode.INQUIRY_DETAIL_FOUND, inquiryQueryService.getInquiry(userId, inquiryId));
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     @Override
     public ApiResponse<InquiryResDTO.InquiryPageDTO> getAllInquiry(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
     ){
         return ApiResponse.onSuccess(InquirySuccessCode.INQUIRY_LIST_FOUND, inquiryQueryService.getAllInquiry(userId, pageable));
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping
     @Override
     public ApiResponse<Void> createInquiry(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @Valid @RequestBody InquiryReqDTO.InquiryDTO inquiryDTO
     ){
         inquiryCommandService.createInquiry(userId, inquiryDTO);

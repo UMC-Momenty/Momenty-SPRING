@@ -2,6 +2,7 @@ package com.umc.momenty.domain.moment.service.command;
 
 import com.umc.momenty.domain.moment.converter.MomentConverter;
 import com.umc.momenty.domain.moment.dto.req.MomentReqDTO;
+import com.umc.momenty.domain.moment.dto.res.MomentResDTO;
 import com.umc.momenty.domain.moment.entity.Moment;
 import com.umc.momenty.domain.moment.repository.MomentRepository;
 import com.umc.momenty.domain.pet.entity.Pet;
@@ -33,7 +34,7 @@ public class MomentCommandServiceImpl implements MomentCommandService{
 
     @Override
     @Transactional
-    public void createMoment(Long userId, Long petId, MomentReqDTO.MomentDTO request) {
+    public MomentResDTO.MomentDTO createMoment(Long userId, Long petId, MomentReqDTO.MomentDTO request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
@@ -50,7 +51,7 @@ public class MomentCommandServiceImpl implements MomentCommandService{
 
         Moment moment = MomentConverter.toMoment(user, pet, request, imageUrls);
         momentRepository.save(moment);
-
+        return MomentConverter.toMomentDTO(moment);
     }
 
 }

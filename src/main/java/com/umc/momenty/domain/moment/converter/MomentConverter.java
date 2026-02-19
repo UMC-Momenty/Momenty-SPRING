@@ -56,6 +56,7 @@ public class MomentConverter {
                 .momentId(moment.getId())
                 .emotion(moment.getEmotion())
                 .content(moment.getContent())
+                .thumbnail(moment.getImages().get(0).getImageUrl())
                 .createdAt(moment.getCreatedAt())
                 .build();
     }

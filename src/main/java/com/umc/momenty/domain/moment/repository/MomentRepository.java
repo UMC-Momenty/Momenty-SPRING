@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface MomentRepository extends JpaRepository<Moment, Long> {
     Page<Moment> findAllByUserIdAndPetId(Long userId, Long petId, Pageable pageable);
-    Optional<Moment> findByIdAndPetIdAndUserId(Long userId, Long petId, Long momentId);
+    Optional<Moment> findByIdAndUserIdAndPetId(Long momentId, Long userId, Long petId);
 }

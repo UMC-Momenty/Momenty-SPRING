@@ -20,14 +20,14 @@ public interface InquiryControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "존재하지 않는 문의내역")
     })
-    ApiResponse<InquiryResDTO.InquiryDTO> getInquiry(Long inquiryId);
+    ApiResponse<InquiryResDTO.InquiryDTO> getInquiry(@Parameter(hidden = true) Long userId, Long inquiryId);
 
     @Operation(summary = "문의하기 API", description = "해당 사용자의 문의를 추가합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "존재하지 않는 사용자")
     })
-    ApiResponse<Void> createInquiry(Long userId,
+    ApiResponse<Void> createInquiry(@Parameter(hidden = true) Long userId,
                                     @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                             description = "문의 추가 요청 (빈 배열이면 사진 미설정, imageKey는 최대 2장, Presigned URL로 요청 시 받은 key 사용)\n\n"
                                                     + "**요청 예시:**\n"
@@ -52,7 +52,7 @@ public interface InquiryControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "요청한 페이지가 범위를 벗어난 경우")
     })
     ApiResponse<InquiryResDTO.InquiryPageDTO> getAllInquiry(
-            Long userId,
+            @Parameter(hidden = true) Long userId,
             @ParameterObject @Parameter(description = "페이지네이션 정보 (page, size, sort)") Pageable pageable);
 
     @Operation(

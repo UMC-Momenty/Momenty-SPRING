@@ -28,16 +28,16 @@ public class ChatController implements ChatControllerDocs {
     private final ConversationQueryService conversationQueryService;
     private final AttachmentCommandService attachmentCommandService;
 
-    @PostMapping("/users/{userId}")
+    @PostMapping("/users")
     @Override
-    public ApiResponse<ChatResDTO.ChatResponse> firstChat(@PathVariable Long userId, @RequestBody ChatReqDTO.ChatRequest request){
-        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.firstChat(userId, request));
+    public ApiResponse<ChatResDTO.ChatResponse> firstChat(@AuthUser Long userId, @RequestBody ChatReqDTO.ChatRequest request){
+        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.firstChat(userId, request.message()));
     }
 
     @PostMapping("/conversations/{conversationId}")
     @Override
-    public ApiResponse<ChatResDTO.ChatResponse> chat(@PathVariable Long conversationId, @RequestBody ChatReqDTO.ChatRequest request){
-        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.chat(conversationId, request));
+    public ApiResponse<ChatResDTO.ChatResponse> chat(@AuthUser Long userId, @PathVariable Long conversationId, @RequestBody ChatReqDTO.ChatRequest request){
+        return ApiResponse.onSuccess(ChatSuccessCode.CHAT_CREATED, chatQueryService.chat(userId, conversationId, request));
     }
 
     @PostMapping("/attachment")

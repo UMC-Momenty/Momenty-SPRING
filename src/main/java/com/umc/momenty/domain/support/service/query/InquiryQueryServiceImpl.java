@@ -23,9 +23,13 @@ public class InquiryQueryServiceImpl implements  InquiryQueryService {
     private final UserRepository userRepository;
 
     @Override
-    public InquiryResDTO.InquiryDTO getInquiry(Long inquiryId){
+    public InquiryResDTO.InquiryDTO getInquiry(Long userId, Long inquiryId){
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new InquiryException(InquiryErrorCode.INQUIRY_NOT_FOUND));
+
+        if(!inquiry.getUser().getId().equals(userId)){
+            throw new InquiryException(InquiryErrorCode.INQUIRY_ACCESS_DENIED);
+        }
 
         return InquiryConverter.toInquiryDTO(inquiry);
     }

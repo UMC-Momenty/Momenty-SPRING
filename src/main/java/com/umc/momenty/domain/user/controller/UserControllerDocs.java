@@ -2,6 +2,7 @@ package com.umc.momenty.domain.user.controller;
 
 import com.umc.momenty.domain.user.dto.req.UserReqDTO;
 import com.umc.momenty.domain.user.dto.res.UserResDTO;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import com.umc.momenty.global.oauth.dto.TokenDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +17,7 @@ public interface UserControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "실패")
     })
-    ApiResponse<UserResDTO.UserProfileDTO> getProfile(@Parameter(description = "조회할 사용자 ID") Long userId);
+    ApiResponse<UserResDTO.UserProfileDTO> getProfile(@Parameter(hidden = true) Long userId);
 
     @Operation(
             summary = "사용자 프로필 수정 API",
@@ -28,7 +29,7 @@ public interface UserControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "존재하지 않는 사용자")
     })
     ApiResponse<TokenDto> updateProfile(
-            @Parameter(description = "수정할 사용자 ID")
+            @Parameter(hidden = true)
             Long userId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "프로필 수정 내용 (PATCH 방식)\n\n"
@@ -50,4 +51,11 @@ public interface UserControllerDocs {
             )
             UserReqDTO.UserProfileDTO userReqDTO
     );
+
+    @Operation(summary = "사용자 상세 조회 API", description = "해당 사용자의 정보를 상세 조회합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "실패")
+    })
+    ApiResponse<UserResDTO.UserDTO> getUser(@Parameter(hidden = true) Long userId);
 }
