@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.umc.momenty.domain.chat.dto.req.ChatReqDTO;
 import com.umc.momenty.domain.chat.dto.res.ChatResDTO;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import com.umc.momenty.global.infra.s3.dto.response.PresignedUrlResponse;
 
@@ -68,8 +69,7 @@ public interface ChatControllerDocs {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패")
     })
     ApiResponse<List<ChatResDTO.ConversationListDTO>> getConversationList(
-        @Parameter(description = "사용자 ID")
-        @PathVariable Long userId,
+        @AuthUser Long userId,
 
         @Parameter(description = "가장 마지막으로 받은 채팅방 ID (필수 X)")
         @RequestParam Long cursorId,
@@ -86,8 +86,7 @@ public interface ChatControllerDocs {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패")
     })
     ApiResponse<List<ChatResDTO.ConversationListDTO>> searchConversationList(
-        @Parameter(description = "사용자 ID")
-        @PathVariable Long userId,
+        @AuthUser Long userId,
 
         @Parameter(description = "검색할 키워드")
         @RequestParam String keyword,
@@ -107,8 +106,7 @@ public interface ChatControllerDocs {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패")
     })
     ApiResponse<List<ChatResDTO.SearchChatDTO>> searchChatList(
-        @Parameter(description = "사용자 ID")
-        @PathVariable Long userId,
+        @AuthUser Long userId,
 
         @Parameter(description = "채팅방 ID")
         @PathVariable Long conversationId,
