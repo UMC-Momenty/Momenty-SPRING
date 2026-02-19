@@ -27,4 +27,15 @@ public class UserConverter {
                 .pets(pets)
                 .build();
     }
+
+    public static UserResDTO.UserDTO toUserDTO(User user){
+        return UserResDTO.UserDTO.builder()
+                .userId(user.getId())
+                .profileUrl(user.getProfileUrl())
+                .username(user.getUsername())
+                .gender(user.getGender())
+                .birth(user.getBirth())
+                .questTime(user.getQuestTime())
+                .build();
+    }
 }
