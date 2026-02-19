@@ -6,10 +6,10 @@ import org.springdoc.core.annotations.ParameterObject;
 
 import com.umc.momenty.domain.daily.dto.req.DailyReqDTO;
 import com.umc.momenty.domain.daily.dto.res.DailyResDTO;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -30,7 +30,7 @@ public interface DailyControllerDocs {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "존재하지 않는 질문")
 	})
 	ApiResponse<Void> createDailyAnswer(
-		@Parameter(description = "사용자 ID")
+		@AuthUser
 		Long userId,
 
 		@RequestBody(
@@ -52,7 +52,7 @@ public interface DailyControllerDocs {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패"),
 	})
 	ApiResponse<List<DailyResDTO.QuestionAnswerDTO>> getAnswerList(
-		@Parameter(description = "사용자 ID")
+		@AuthUser
 		Long userId,
 
 		@ParameterObject
@@ -65,7 +65,7 @@ public interface DailyControllerDocs {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패"),
 	})
 	ApiResponse<DailyResDTO.AnswerStatusDTO> getAnswerList(
-		@Parameter(description = "사용자 ID")
+		@AuthUser
 		Long userId
 	);
 }
