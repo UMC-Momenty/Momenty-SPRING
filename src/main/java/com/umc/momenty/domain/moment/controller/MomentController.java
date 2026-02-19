@@ -6,6 +6,7 @@ import com.umc.momenty.domain.moment.exception.code.MomentSuccessCode;
 import com.umc.momenty.domain.moment.service.command.MomentCommandService;
 import com.umc.momenty.domain.moment.service.command.MomentImageCommandService;
 import com.umc.momenty.domain.moment.service.query.MomentQueryService;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import com.umc.momenty.global.infra.s3.dto.response.PresignedUrlResponse;
 import jakarta.validation.Valid;
@@ -27,16 +28,16 @@ public class MomentController implements MomentControllerDocs{
     private final MomentImageCommandService momentImageCommandService;
 
     @Override
-    @PostMapping("users/{userId}/pets/{petId}")
-    public ApiResponse<Void> createMoment(
-            @PathVariable Long userId,
+    @PostMapping("pets/{petId}")
+    public ApiResponse<MomentResDTO.MomentDTO> createMoment(
+            @AuthUser Long userId,
             @PathVariable Long petId,
             @Valid @RequestBody MomentReqDTO.MomentDTO dto
     ){
-        momentCommandService.createMoment(userId, petId, dto);
         return ApiResponse.onSuccess(
                 MomentSuccessCode.MOMENT_CREATED,
-                null);
+                momentCommandService.createMoment(userId, petId, dto)
+        );
     }
 
     @Override
@@ -50,9 +51,9 @@ public class MomentController implements MomentControllerDocs{
     }
 
     @Override
-    @GetMapping("/users/{userId}/pets/{petId}")
+    @GetMapping("/pets/{petId}")
     public ApiResponse<MomentResDTO.MomentPageDTO> getMoments(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @PathVariable Long petId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
@@ -63,9 +64,9 @@ public class MomentController implements MomentControllerDocs{
     }
 
     @Override
-    @GetMapping("/users/{userId}/pets/{petId}/{momentId}")
+    @GetMapping("/pets/{petId}/{momentId}")
     public ApiResponse<MomentResDTO.MomentDTO> getMoment(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @PathVariable Long petId,
             @PathVariable Long momentId
     ){

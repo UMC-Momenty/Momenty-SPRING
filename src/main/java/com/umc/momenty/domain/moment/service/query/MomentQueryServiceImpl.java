@@ -28,7 +28,7 @@ public class MomentQueryServiceImpl implements MomentQueryService{
     @Override
     @Transactional(readOnly = true)
     public MomentResDTO.MomentDTO getMoment(Long userId, Long petId, Long momentId){
-        Moment moment = momentRepository.findByIdAndPetIdAndUserId(momentId, petId, userId)
+        Moment moment = momentRepository.findByIdAndUserIdAndPetId(momentId, userId, petId)
                 .orElseThrow(() -> new MomentException(MomentErrorCode.MOMENT_NOT_FOUND));
         return MomentConverter.toMomentDTO(moment);
     }

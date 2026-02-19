@@ -21,7 +21,7 @@ public interface MomentControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "실패")
     })
-    ApiResponse<Void> createMoment(
+    ApiResponse<MomentResDTO.MomentDTO> createMoment(
             @Parameter(description = "사용자 ID", required = true) Long userId,
             @Parameter(description = "반려동물 ID", required = true) Long petId,
             @RequestBody(
@@ -51,18 +51,7 @@ public interface MomentControllerDocs {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "실패")
     })
-    ApiResponse<List<PresignedUrlResponse>> createMomentImage(
-            @RequestBody(
-                    description = """
-                        Presigned URL 생성 요청 바디
-
-                        **요청 예시**
-                        - imageKey: "moments/uuid-1"
-                        """,
-                    required = true
-            )
-            @Valid MomentReqDTO.MomentImageCreateDTO request
-    );
+    ApiResponse<List<PresignedUrlResponse>> createMomentImage(@RequestBody MomentReqDTO.MomentImageCreateDTO request);
 
     @Operation(
             summary = "모먼트 리스트 조회 API",
