@@ -4,6 +4,7 @@ import com.umc.momenty.domain.schedule.dto.req.ScheduleReqDTO;
 import com.umc.momenty.domain.schedule.dto.res.ScheduleResDTO;
 import com.umc.momenty.domain.schedule.exception.code.ScheduleSuccessCode;
 import com.umc.momenty.domain.schedule.service.ScheduleService;
+import com.umc.momenty.global.annotation.AuthUser;
 import com.umc.momenty.global.apiPayload.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -23,27 +24,27 @@ public class ScheduleController implements ScheduleControllerDocs {
     private final ScheduleService scheduleService;
 
     // 1. 내 펫 목록 조회
-    @GetMapping("/users/{userId}/schedules/pets")
+    @GetMapping("/schedules/pets")
     @Override
-    public ApiResponse<ScheduleResDTO.MyPetsResponseDTO> getMyPets(@PathVariable Long userId) {
+    public ApiResponse<ScheduleResDTO.MyPetsResponseDTO> getMyPets(@AuthUser Long userId) {
         return ApiResponse.onSuccess(ScheduleSuccessCode.SCHEDULE_FOUND, scheduleService.getMyPets(userId));
     }
 
     // 2. 전체 캘린더 조회
-    @GetMapping("/users/{userId}/schedules/calendar")
+    @GetMapping("/schedules/calendar")
     @Override
     public ApiResponse<ScheduleResDTO.CalendarResponseDTO> getCalendarAll(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @RequestParam int year,
             @RequestParam @Min(1) @Max(12) int month) {
         return ApiResponse.onSuccess(ScheduleSuccessCode.SCHEDULE_FOUND, scheduleService.getCalendarAll(userId, year, month));
     }
 
     // 3. 특정 펫 캘린더 조회
-    @GetMapping("/users/{userId}/schedules/pets/{petId}/calendar")
+    @GetMapping("/schedules/pets/{petId}/calendar")
     @Override
     public ApiResponse<ScheduleResDTO.CalendarResponseDTO> getCalendarByPet(
-            @PathVariable Long userId,
+            @AuthUser Long userId,
             @PathVariable Long petId,
             @RequestParam int year,
             @RequestParam @Min(1) @Max(12) int month) {
